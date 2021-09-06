@@ -29,7 +29,27 @@ paths:
               type: object
       responses:
         '200':
-          $ref: '#/components/responses/signout'
+          description: Logout user
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: 'sAccessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax sRefreshToken=; Path=/auth/session/refresh; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax sIdRefreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax'
+            id-refresh-token:
+              schema:
+                type: string
+                example: remove
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                example: id-refresh-token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/statusOK'
         
         '404':
           $ref: '#/components/responses/404'
@@ -52,7 +72,27 @@ paths:
         - $ref: '#/components/parameters/sRefreshToken'
       responses:
         '200':
-          $ref: '#/components/responses/refresh'
+          description: Refresh users
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            
+            anti-csrf:
+              description: This will only be here if enabled by the user
+              schema:
+                $ref: '#/components/schemas/token'
+            front-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            id-refresh-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                example: 'id-refresh-token, anti-csrf, front-token'
           
         '404':
           $ref: '#/components/responses/404'
@@ -71,7 +111,26 @@ paths:
         - $ref: '#/components/parameters/rid'
       responses:
         '200':
-          $ref: '#/components/responses/createNewSession'
+          description: create a new session
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            anti-csrf:
+              description: This will only be here if enabled by the user
+              schema:
+                $ref: '#/components/schemas/token'
+            front-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            id-refresh-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                enum: ['id-refresh-token', 'anti-csrf', 'front-token']
           
         '404':
           $ref: '#/components/responses/404'
@@ -93,7 +152,22 @@ paths:
         - $ref: '#/components/parameters/sIdRefreshToken'
       responses:
         '200':
-          $ref: '#/components/responses/verifySession'
+          description: verify session
+          headers:
+            sAccessToken:
+              description: Is sent if the session gets refreshed or regenerated.
+              schema:
+                type: string
+                example: sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax;
+            front-token:
+              description: Is sent if the session gets refreshed or regenerated.
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              description: Is sent if the session gets refreshed or regenerated.
+              schema:
+                type: string
+                example: 'front-token'
           
         '404':
           $ref: '#/components/responses/404'
@@ -116,10 +190,40 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/signInRequest'
+              type: object
+              properties:
+                formFields:
+                  $ref: '#/components/schemas/formFields'
       responses:
         '200':
-          $ref: '#/components/responses/signIn'
+          description: Sign in Response
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            
+            anti-csrf:
+              description: This will only be here if enabled by the user
+              schema:
+                $ref: '#/components/schemas/token'
+            front-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            id-refresh-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                enum: ['id-refresh-token, anti-csrf, front-token']
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/signInResponse'
+                  - $ref: '#/components/schemas/fieldErrorResponse'
+                  - $ref: '#/components/schemas/wrongCredentialsResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -141,10 +245,39 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/signUpRequest'
+              type: object
+              properties:
+                formFields:
+                  $ref: '#/components/schemas/formFields'
       responses:
         '200':
-          $ref: '#/components/responses/signUp'
+          description: Sign up Response
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            
+            anti-csrf:
+              description: This will only be here if enabled by the user
+              schema:
+                $ref: '#/components/schemas/token'
+            front-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            id-refresh-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                enum: ['id-refresh-token, anti-csrf, front-token']
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/signupResponse'
+                  - $ref: '#/components/schemas/fieldErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -165,7 +298,16 @@ paths:
         - $ref: '#/components/parameters/email'
       responses:
         '200':
-          $ref: '#/components/responses/emailExists'
+          description: Checks if an email exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/statusOK'
+                  exists:
+                    $ref: '#/components/schemas/exists'
         
         '404':
           $ref: '#/components/responses/404'
@@ -187,10 +329,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/passwordResetTokenRequest'
+              type: object
+              properties:
+                formFields:
+                  $ref: '#/components/schemas/formFields'
+              example: { formFields: [ {id: 'email', value: 'test@email.com'}]}
       responses:
         '200':
-          $ref: '#/components/responses/passwordResetToken'
+          description: Generate a new reset password token for this user
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/passwordResetTokenResponse'
+                  - $ref: '#/components/schemas/fieldErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -212,10 +364,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/passwordResetRequest'
+              type: object
+              properties:
+                method:
+                  $ref: '#/components/schemas/method'
+                formfields:
+                  $ref: '#/components/schemas/formFields'
+                token:
+                  $ref: '#/components/schemas/token'
+              example:  { method: "token", formFields: [{id: "password", value: "newPass123"} ], token: "ZTRiOTBjNz...jI5MTZlODkxw"}
       responses:
         '200':
-          $ref: '#/components/responses/passwordReset'
+          description: Reset a password using password reset token
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/passwordResetResponse'
+                  - $ref: '#/components/schemas/fieldErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -237,10 +403,44 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/signinupRequest'
+              type: object
+              properties:
+                redirect_uri:
+                  $ref: '#/components/schemas/redirect_uri'
+                thirdPartyId:
+                  $ref: '#/components/schemas/thirdPartyId'
+                code: 
+                  $ref: '#/components/schemas/code'
       responses:
         '200':
-          $ref: '#/components/responses/signinup'
+          description: Signin/up a user
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            
+            anti-csrf:
+              description: This will only be here if enabled by the user
+              schema:
+                $ref: '#/components/schemas/token'
+            front-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            id-refresh-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                enum: ['id-refresh-token, anti-csrf, front-token']
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/signinupResponse'
+                  - $ref: '#/components/schemas/noEmailGivenByProviderResponse'
+                  - $ref: '#/components/schemas/thirdPartyFieldErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -264,7 +464,17 @@ paths:
             $ref: '#/components/schemas/thirdPartyId'
       responses:
         '200':
-          $ref: '#/components/responses/authorisationUrl'
+          description: Get the OAuth authorisation URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/statusOK'
+                  url:
+                    type: string
+                    example: https://yourdomain.com/authorize?
         
         '404':
           $ref: '#/components/responses/404'
@@ -287,7 +497,30 @@ paths:
         - $ref: '#/components/parameters/sIdRefreshToken'
       responses:
         '200':
-          $ref: '#/components/responses/emailVerificationToken'
+          description: Send email verification email
+          headers:
+            sAccessToken:
+              description: Is sent if the session gets refreshed or regenerated.
+              schema:
+                type: string
+                example: sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax;
+            front-token:
+              description: Is sent if the session gets refreshed or regenerated.
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              description: Is sent if the session gets refreshed or regenerated.
+              schema:
+                type: string
+                example: 'front-token' 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: ['OK', 'EMAIL_ALREADY_VERIFIED_ERROR']
         
         '404':
           $ref: '#/components/responses/404'
@@ -309,10 +542,23 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/verifyEmailRequest'
+              type: object
+              properties:
+                method:
+                  $ref: '#/components/schemas/method'
+                token:
+                  $ref: '#/components/schemas/token'
       responses:
         '200':
-          $ref: '#/components/responses/verifyEmail'
+          description: Verify an email
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: ['OK', 'EMAIL_VERIFICATION_INVALID_TOKEN_ERROR']
         
         '404':
           $ref: '#/components/responses/404'
@@ -334,7 +580,32 @@ paths:
         - $ref: '#/components/parameters/sIdRefreshToken'
       responses:
         '200':
-          $ref: '#/components/responses/getVerifyEmail'
+          description: check if an email is verified
+          headers:
+            sAccessToken:
+              description: Is sent if the session gets refreshed or regenerated.
+              schema:
+                type: string
+                example: sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax;
+            front-token:
+              description: Is sent if the session gets refreshed or regenerated.
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              description: Is sent if the session gets refreshed or regenerated.
+              schema:
+                type: string
+                example: 'front-token'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/statusOK'
+                  isVerified:
+                    type: boolean
+                    example: true
         
         '404':
           $ref: '#/components/responses/404'
@@ -435,267 +706,7 @@ components:
           schema:
             $ref: "#/components/schemas/notFound"
   
-    signout:
-      description: Logout user
-      headers:
-        Set-Cookie:
-          schema:
-            type: string
-            example: 'sAccessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax sRefreshToken=; Path=/auth/session/refresh; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax sIdRefreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax'
-        id-refresh-token:
-          schema:
-            type: string
-            example: remove
-        Access-Control-Expose-Headers:
-          schema:
-            type: string
-            example: id-refresh-token
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/signoutResponse'
-    
-    refresh:
-      description: Refresh users
-      headers:
-        Set-Cookie:
-          schema:
-            type: string
-            example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-        
-        anti-csrf:
-          description: This will only be here if enabled by the user
-          schema:
-            $ref: '#/components/schemas/token'
-        front-token:
-          schema:
-            $ref: '#/components/schemas/token'
-        id-refresh-token:
-          schema:
-            $ref: '#/components/schemas/token'
-        Access-Control-Expose-Headers:
-          schema:
-            type: string
-            example: 'id-refresh-token, anti-csrf, front-token'
-    
-    
-    signIn:
-      description: Sign in Response
-      headers:
-        Set-Cookie:
-          schema:
-            type: string
-            example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-        
-        anti-csrf:
-          description: This will only be here if enabled by the user
-          schema:
-            $ref: '#/components/schemas/token'
-        front-token:
-          schema:
-            $ref: '#/components/schemas/token'
-        id-refresh-token:
-          schema:
-            $ref: '#/components/schemas/token'
-        Access-Control-Expose-Headers:
-          schema:
-            type: string
-            enum: ['id-refresh-token, anti-csrf, front-token']
-      content:
-        application/json:
-          schema:
-            oneOf:
-              - $ref: '#/components/schemas/signInResponse'
-              - $ref: '#/components/schemas/fieldErrorResponse'
-              - $ref: '#/components/schemas/wrongCredentialsResponse'
-    
-    signUp:
-      description: Sign up Response
-      headers:
-        Set-Cookie:
-          schema:
-            type: string
-            example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-        
-        anti-csrf:
-          description: This will only be here if enabled by the user
-          schema:
-            $ref: '#/components/schemas/token'
-        front-token:
-          schema:
-            $ref: '#/components/schemas/token'
-        id-refresh-token:
-          schema:
-            $ref: '#/components/schemas/token'
-        Access-Control-Expose-Headers:
-          schema:
-            type: string
-            enum: ['id-refresh-token, anti-csrf, front-token']
-      content:
-        application/json:
-          schema:
-            oneOf:
-              - $ref: '#/components/schemas/signupResponse'
-              - $ref: '#/components/schemas/fieldErrorResponse'
-    
-    emailExists:
-      description: Checks if an email exists
-      content:
-        application/json:
-          schema:
-           $ref: '#/components/schemas/emailExistsResponse'
-    
-    passwordResetToken:
-      description: Generate a new reset password token for this user
-      content:
-        application/json:
-          schema:
-            oneOf:
-              - $ref: '#/components/schemas/passwordResetTokenResponse'
-              - $ref: '#/components/schemas/fieldErrorResponse'
-    
-    passwordReset:
-      description: Reset a password using password reset token
-      content:
-        application/json:
-          schema:
-            oneOf:
-              - $ref: '#/components/schemas/passwordResetResponse'
-              - $ref: '#/components/schemas/fieldErrorResponse'
-    
-    signinup:
-      description: Signin/up a user
-      headers:
-        Set-Cookie:
-          schema:
-            type: string
-            example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-        
-        anti-csrf:
-          description: This will only be here if enabled by the user
-          schema:
-            $ref: '#/components/schemas/token'
-        front-token:
-          schema:
-            $ref: '#/components/schemas/token'
-        id-refresh-token:
-          schema:
-            $ref: '#/components/schemas/token'
-        Access-Control-Expose-Headers:
-          schema:
-            type: string
-            enum: ['id-refresh-token, anti-csrf, front-token']
-      content:
-        application/json:
-          schema:
-            oneOf:
-              - $ref: '#/components/schemas/signinupResponse'
-              - $ref: '#/components/schemas/noEmailGivenByProviderResponse'
-              - $ref: '#/components/schemas/thirdPartyFieldErrorResponse'
-    
-    authorisationUrl:
-      description: Get the OAuth authorisation URL
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/authorisationUrlResponse'
-    
-    emailVerificationToken:
-      description: Send email verification email
-      headers:
-        sAccessToken:
-          description: Is sent if the session gets refreshed or regenerated.
-          schema:
-            type: string
-            example: sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax;
-        front-token:
-          description: Is sent if the session gets refreshed or regenerated.
-          schema:
-            $ref: '#/components/schemas/token'
-        Access-Control-Expose-Headers:
-          description: Is sent if the session gets refreshed or regenerated.
-          schema:
-            type: string
-            example: 'front-token' 
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/emailVerificationTokenResponse'
-    
-    verifyEmail:
-      description: Verify an email
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/verifyEmailResponse'
-    
-    getVerifyEmail:
-      description: check if an email is verified
-      headers:
-        sAccessToken:
-          description: Is sent if the session gets refreshed or regenerated.
-          schema:
-            type: string
-            example: sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax;
-        front-token:
-          description: Is sent if the session gets refreshed or regenerated.
-          schema:
-            $ref: '#/components/schemas/token'
-        Access-Control-Expose-Headers:
-          description: Is sent if the session gets refreshed or regenerated.
-          schema:
-            type: string
-            example: 'front-token'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/getVerifyEmailResponse'
-            
-    createNewSession:
-      description: create a new session
-      headers:
-        Set-Cookie:
-          schema:
-            type: string
-            example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-        anti-csrf:
-          description: This will only be here if enabled by the user
-          schema:
-            $ref: '#/components/schemas/token'
-        front-token:
-          schema:
-            $ref: '#/components/schemas/token'
-        id-refresh-token:
-          schema:
-            $ref: '#/components/schemas/token'
-        Access-Control-Expose-Headers:
-          schema:
-            type: string
-            enum: ['id-refresh-token', 'anti-csrf', 'front-token']
-    
-    verifySession:
-      description: verify session
-      headers:
-        sAccessToken:
-          description: Is sent if the session gets refreshed or regenerated.
-          schema:
-            type: string
-            example: sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax;
-        front-token:
-          description: Is sent if the session gets refreshed or regenerated.
-          schema:
-            $ref: '#/components/schemas/token'
-        Access-Control-Expose-Headers:
-          description: Is sent if the session gets refreshed or regenerated.
-          schema:
-            type: string
-            example: 'front-token'    
-      
-          
-        
-        
-      
-      
+
       
       
   schemas:
@@ -758,61 +769,6 @@ components:
       example: { formFields: [ {id: email, value: johndoe@gmail.com},{id: password, value: testPass123}]}
     
     
-    signInRequest:
-      type: object
-      properties:
-        formFields:
-          $ref: '#/components/schemas/formFields'
-          
-    signUpRequest:
-      type: object
-      properties:
-        formFields:
-          $ref: '#/components/schemas/formFields'
-    
-    passwordResetTokenRequest:
-      type: object
-      properties:
-        formFields:
-          $ref: '#/components/schemas/formFields'
-      example: { formFields: [ {id: 'email', value: 'test@email.com'}]}
-    
-    passwordResetRequest:
-      type: object
-      properties:
-        method:
-          $ref: '#/components/schemas/method'
-        formfields:
-          $ref: '#/components/schemas/formFields'
-        token:
-          $ref: '#/components/schemas/token'
-      example:  { method: "token", formFields: [{id: "password", value: "newPass123"} ], token: "ZTRiOTBjNz...jI5MTZlODkxw"}
-    
-    signinupRequest:
-      type: object
-      properties:
-        redirect_uri:
-          $ref: '#/components/schemas/redirect_uri'
-        thirdPartyId:
-          $ref: '#/components/schemas/thirdPartyId'
-        code: 
-          $ref: '#/components/schemas/code'
-    
-    verifyEmailRequest:
-      type: object
-      properties:
-        method:
-          $ref: '#/components/schemas/method'
-        token:
-          $ref: '#/components/schemas/token'
-      
-    signoutResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/statusOK'
-    
-    
     signInResponse:
       type: object
       properties:
@@ -829,14 +785,7 @@ components:
         user:
           $ref: '#/components/schemas/user'
           
-    emailExistsResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/statusOK'
-        exists:
-          $ref: '#/components/schemas/exists'
-    
+
     passwordResetTokenResponse:
       type: object
       properties:
@@ -854,39 +803,6 @@ components:
           type: boolean
           example: true
     
-    authorisationUrlResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/statusOK'
-        url:
-          type: string
-          example: https://yourdomain.com/authorize?
-    
-    getVerifyEmailResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/statusOK'
-        isVerified:
-          type: boolean
-          example: true
-  
-          
-    verifyEmailResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          enum: ['OK', 'EMAIL_VERIFICATION_INVALID_TOKEN_ERROR']
-    
-    emailVerificationTokenResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          enum: ['OK', 'EMAIL_ALREADY_VERIFIED_ERROR']
-            
     passwordResetResponse:
       type: object
       properties:
