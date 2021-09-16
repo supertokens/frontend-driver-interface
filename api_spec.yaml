@@ -615,7 +615,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /apiBasePath/jwt/jwks:
+  /{apiBasePath}/jwt/jwks:
     get:
       tags:
         - JWT Recipe
