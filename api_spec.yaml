@@ -325,11 +325,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                formFields:
-                  $ref: '#/components/schemas/formFields'
-              example: { formFields: [ {id: 'email', value: 'test@email.com'}]}
+              $ref: '#/components/schemas/formFields'
+            example: { formFields: [ {id: 'email', value: 'test@email.com'}]}
       responses:
         '200':
           description: Generate a new reset password token for this user
