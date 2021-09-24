@@ -828,7 +828,7 @@ components:
             $ref: '#/components/schemas/id'
           value:
             type: string
-      example: { formFields: [ {id: email, value: johndoe@gmail.com},{id: password, value: testPass123}]}
+      example:  [ {id: email, value: johndoe@gmail.com},{id: password, value: testPass123}]
     
     
     signInResponse:
