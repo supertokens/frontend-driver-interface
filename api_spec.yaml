@@ -10,6 +10,7 @@ tags:
   - name: Session Recipe
   - name: EmailPassword Recipe
   - name: ThirdParty Recipe
+  - name: ThirdPartyEmailPassword Recipe
   - name: EmailVerification Recipe
 paths:
   /{apiBasePath}/signout:
@@ -482,6 +483,145 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
   
+  /{apiBasePath}/signin⠀:
+    post:
+      tags:
+        - ThirdPartyEmailPassword Recipe
+      operationId: thirdPartyEmailPasswordsignIn
+      description: |
+        This API implements the the EmailPassword recipe's signin  API. Please refer to that API.
+      parameters: 
+        - $ref: '#/components/parameters/apiBasePath'
+
+      responses:
+        '200':
+          description: ""
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+  
+  /{apiBasePath}/signup⠀:
+    post:
+      tags:
+        - ThirdPartyEmailPassword Recipe
+      operationId: thirdPartyEmailPasswordsignUp
+      description: |
+        This API implements the the EmailPassword recipe's signup  API. Please refer to that API.
+      parameters: 
+        - $ref: '#/components/parameters/apiBasePath'
+
+      responses:
+        '200':
+          description: ""
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+  
+  /{apiBasePath}/signup/email/exists⠀:
+    get:
+      tags:
+        - ThirdPartyEmailPassword Recipe
+      operationId: thirdPartyEmailPasswordEmailExists
+      description: |
+        This API implements the the EmailPassword recipe's /signup/email/exists  API. Please refer to that API.
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      responses:
+        '200':
+          description: ""
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500' 
+        
+  /{apiBasePath}/user/password/reset/token⠀:
+    post:
+      tags:
+        - ThirdPartyEmailPassword Recipe
+      operationId: thirdPartyEmailPasswordPasswordResetToken
+      description: |
+        This API implements the the EmailPassword recipe's /password/reset/token  API. Please refer to that API.
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      responses:
+        '200':
+          description: ""
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500' 
+  
+  /{apiBasePath}/user/password/reset⠀:
+    post:
+      tags:
+        - ThirdPartyEmailPassword Recipe
+      operationId: thirdPartyEmailPasswordPasswordReset
+      description: |
+        This API implements the the EmailPassword recipe's /user/password/reset  API. Please refer to that API.
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+    
+      responses:
+        '200': 
+          description: ""
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500' 
+  
+  /{apiBasePath}/signinup⠀:
+    post:
+      tags:
+        - ThirdPartyEmailPassword Recipe
+      operationId: thirdPartyEmailPasswordSignInUp
+      description: |
+        This API implements the the ThirdParty recipe's /signinup  API. Please refer to that API.
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      responses:
+        '200':
+          description: ""
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500' 
+  
+  /{apiBasePath}/authorisationurl⠀:
+    get:
+      tags:
+        - ThirdPartyEmailPassword Recipe
+      operationId: thirdPartyEmailPasswordAuthorisationUrl
+      description: |
+        This API implements the ThirdParty Recipe's /authorisationurl API, please refer to that API.
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+
+      responses:
+        '200':
+          description: ""
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+  
+  
+  
   /{apiBasePath}/user/email/verify/token:
     post:
       tags:
@@ -766,7 +906,7 @@ components:
             $ref: '#/components/schemas/id'
           value:
             type: string
-      example:  [ {id: email, value: johndoe@gmail.com},{id: password, value: testPass123}]
+      example: [ {id: email, value: johndoe@gmail.com},{id: password, value: testPass123}]
     
     
     signInResponse:
