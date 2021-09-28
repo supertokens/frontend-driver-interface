@@ -12,6 +12,8 @@ tags:
   - name: ThirdParty Recipe
   - name: ThirdPartyEmailPassword Recipe
   - name: EmailVerification Recipe
+  
+
 paths:
   /{apiBasePath}/signout:
     post:
@@ -489,13 +491,102 @@ paths:
         - ThirdPartyEmailPassword Recipe
       operationId: thirdPartyEmailPasswordsignIn
       description: |
-        This API implements the the EmailPassword recipe's signin  API. Please refer to that API.
+        Signin a user with email ID and password
       parameters: 
         - $ref: '#/components/parameters/apiBasePath'
-
+        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                formFields:
+                  $ref: '#/components/schemas/formFields'
       responses:
         '200':
-          description: ""
+          description: Sign in Response
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            
+            anti-csrf:
+              description: This will only be here if enabled by the user
+              schema:
+                $ref: '#/components/schemas/token'
+            front-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            id-refresh-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                enum: ['id-refresh-token, anti-csrf, front-token']
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/signInResponse'
+                  - $ref: '#/components/schemas/fieldErrorResponse'
+                  - $ref: '#/components/schemas/wrongCredentialsResponse'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+
+  /{apiBasePath}/signup⠀:
+    post:
+      tags:
+        - ThirdPartyEmailPassword Recipe
+      operationId: thirdPartyEmailPasswordsignUp
+      description: |
+        Signup a user with email ID and password
+      parameters: 
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                formFields:
+                  $ref: '#/components/schemas/formFields'
+      responses:
+        '200':
+          description: Sign up Response
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            
+            anti-csrf:
+              description: This will only be here if enabled by the user
+              schema:
+                $ref: '#/components/schemas/token'
+            front-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            id-refresh-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                enum: ['id-refresh-token, anti-csrf, front-token']
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/signupResponse'
+                  - $ref: '#/components/schemas/fieldErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -503,25 +594,6 @@ paths:
         '500':
           $ref: '#/components/responses/500'
   
-  /{apiBasePath}/signup⠀:
-    post:
-      tags:
-        - ThirdPartyEmailPassword Recipe
-      operationId: thirdPartyEmailPasswordsignUp
-      description: |
-        This API implements the the EmailPassword recipe's signup  API. Please refer to that API.
-      parameters: 
-        - $ref: '#/components/parameters/apiBasePath'
-
-      responses:
-        '200':
-          description: ""
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'
   
   /{apiBasePath}/signup/email/exists⠀:
     get:
@@ -529,12 +601,23 @@ paths:
         - ThirdPartyEmailPassword Recipe
       operationId: thirdPartyEmailPasswordEmailExists
       description: |
-        This API implements the the EmailPassword recipe's /signup/email/exists  API. Please refer to that API.
+        Check if an email exists
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
+        - $ref: '#/components/parameters/email'
       responses:
         '200':
-          description: ""
+          description: Checks if an email exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/statusOK'
+                  exists:
+                    $ref: '#/components/schemas/exists'
         
         '404':
           $ref: '#/components/responses/404'
@@ -548,18 +631,34 @@ paths:
         - ThirdPartyEmailPassword Recipe
       operationId: thirdPartyEmailPasswordPasswordResetToken
       description: |
-        This API implements the the EmailPassword recipe's /password/reset/token  API. Please refer to that API.
+        Generate a new reset password token for this user
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                formFields:
+                  $ref: '#/components/schemas/formFields'
+              example: { formFields: [ {id: 'email', value: 'test@email.com'}]}
       responses:
         '200':
-          description: ""
+          description: Generate a new reset password token for this user
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/passwordResetTokenResponse'
+                  - $ref: '#/components/schemas/fieldErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
         
         '500':
-          $ref: '#/components/responses/500' 
+          $ref: '#/components/responses/500'  
   
   /{apiBasePath}/user/password/reset⠀:
     post:
@@ -567,13 +666,32 @@ paths:
         - ThirdPartyEmailPassword Recipe
       operationId: thirdPartyEmailPasswordPasswordReset
       description: |
-        This API implements the the EmailPassword recipe's /user/password/reset  API. Please refer to that API.
+        Reset a password using password reset token
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
-    
+        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                method:
+                  $ref: '#/components/schemas/method'
+                formfields:
+                  $ref: '#/components/schemas/formFields'
+                token:
+                  $ref: '#/components/schemas/token'
+              example:  { method: "token", formFields: [{id: "password", value: "newPass123"} ], token: "ZTRiOTBjNz...jI5MTZlODkxw"}
       responses:
-        '200': 
-          description: ""
+        '200':
+          description: Reset a password using password reset token
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/passwordResetResponse'
+                  - $ref: '#/components/schemas/fieldErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -587,12 +705,52 @@ paths:
         - ThirdPartyEmailPassword Recipe
       operationId: thirdPartyEmailPasswordSignInUp
       description: |
-        This API implements the the ThirdParty recipe's /signinup  API. Please refer to that API.
+        Signin/up a user using a Social Provider
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                redirect_uri:
+                  $ref: '#/components/schemas/redirect_uri'
+                thirdPartyId:
+                  $ref: '#/components/schemas/thirdPartyId'
+                code: 
+                  $ref: '#/components/schemas/code'
       responses:
         '200':
-          description: ""
+          description: Signin/up a user
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            
+            anti-csrf:
+              description: This will only be here if enabled by the user
+              schema:
+                $ref: '#/components/schemas/token'
+            front-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            id-refresh-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                enum: ['id-refresh-token, anti-csrf, front-token']
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/signinupResponse'
+                  - $ref: '#/components/schemas/noEmailGivenByProviderResponse'
+                  - $ref: '#/components/schemas/thirdPartyFieldErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -606,19 +764,33 @@ paths:
         - ThirdPartyEmailPassword Recipe
       operationId: thirdPartyEmailPasswordAuthorisationUrl
       description: |
-        This API implements the ThirdParty Recipe's /authorisationurl API, please refer to that API.
+        Signin/up a user
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
-
+        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
+        - in: query
+          name: thirdPartyId
+          schema:
+            $ref: '#/components/schemas/thirdPartyId'
       responses:
         '200':
-          description: ""
+          description: Get the OAuth authorisation URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/statusOK'
+                  url:
+                    type: string
+                    example: https://yourdomain.com/authorize?
         
         '404':
           $ref: '#/components/responses/404'
         
         '500':
-          $ref: '#/components/responses/500'
+          $ref: '#/components/responses/500' 
   
   
   
@@ -775,6 +947,13 @@ components:
       name: rid
       in: header
       example: thirdparty
+      schema:
+        type: string
+    
+    thirdPartyEmailPasswordRid:
+      name: rid
+      in: header
+      example: thirdpartyemailpassword
       schema:
         type: string
     
