@@ -13,7 +13,7 @@ tags:
   - name: ThirdPartyEmailPassword Recipe
   - name: EmailVerification Recipe
   - name: JWT Recipe
-
+  - name: Development
 paths:
   /{apiBasePath}/signout:
     post:
@@ -976,7 +976,53 @@ paths:
         
         '500':
           $ref: '#/components/responses/500'
-      
+  
+  /{apiBasePath}/status:
+    get:
+      tags:
+        - Development
+      description: |
+        Check core status, if the user is using `try.supertokens.io` as their connection url, ask them to use the managed service or deploy their own instance of the core for production.
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      responses:
+        '200':
+          description: Check core status, if the user is using `try.supertokens.io` as their connection url, ask them to use the managed service or deploy their own instance of the core for production.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - type: object
+                  properties:
+                    status:
+                      type: string
+                      enum: ['OK']
+                - type: object
+                  properties:
+                    status:
+                      type: string
+                      enum: ['You are currently using try.supertokens.io for your core, it is for demo purposes. Replace this with the address of your core instance (sign up on supertokens.io), or self host a core.']
+                - type: object
+                  properties:
+                    status:
+                      type: string
+                      enum: ['There is no core to query, please check your connection_uri']
+                - type: object
+                  properties:
+                    status:
+                      type: string
+                      enum: ['Your API Key is not correctly configured']
+                      
+              
+                
+        '400':
+          $ref: '#/components/responses/400'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
       
 components:
   parameters:
