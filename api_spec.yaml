@@ -992,7 +992,7 @@ paths:
             application/json:
               schema:
                 type: object
-                description: Status with an Optional message
+                description: Status with an optional message
                 properties:
                   status:
                     type: string
