@@ -999,7 +999,6 @@ paths:
                     enum: ["OK"]
                   message:
                     type: string
-                    enum: ["You are currently using try.supertokens.io for your core. This is for demo purposes only, so please replace this with the address of your managed core instance (sign up on supertokens.io), or the address of your self hosted core instance", "You are currently using development OAuth keys, please replace them with your own keys for production use"]
                     
               
         '400':
@@ -1009,16 +1008,7 @@ paths:
           $ref: '#/components/responses/404'
         
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                description: Invalid core configuration
-                properties:
-                  message:
-                    type: string
-                    enum: ["There is no core to query, please check your connection uri", "The configured SuperTokens core requires an API key. Please make sure that you have set it in your backend init function call. If using our managed service, you can find your API key on the dashboard at supertokens.io", 'It seems like your API key is incorrect. Please double check that you have provided the right key.']
+          $ref: '#/components/responses/500'
                     
       
 components:
