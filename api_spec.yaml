@@ -13,7 +13,7 @@ tags:
   - name: ThirdPartyEmailPassword Recipe
   - name: EmailVerification Recipe
   - name: JWT Recipe
-  - name: Development
+  - name: Other APIs not related to a Recipe
 paths:
   /{apiBasePath}/signout:
     post:
@@ -980,7 +980,7 @@ paths:
   /{apiBasePath}/status:
     get:
       tags:
-        - Development
+        - Other APIs not related to a Recipe
       description: |
         Health Check API
       parameters:
