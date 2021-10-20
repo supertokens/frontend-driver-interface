@@ -11,10 +11,79 @@ tags:
   - name: EmailPassword Recipe
   - name: ThirdParty Recipe
   - name: ThirdPartyEmailPassword Recipe
+  - name: Passwordless Recipe
   - name: EmailVerification Recipe
   - name: JWT Recipe
   - name: Other APIs not related to a Recipe
 paths:
+  /{apiBasePath}/signinup/token:
+    post:
+      tags:
+        - Passwordless Recipe
+      operationId: passwordlessSignInUpStart
+      description: |
+        Start sign in/up process with passwordless
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/passwordlessRid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/passwordlessStartSignInRequest'
+
+      responses:
+        '200':
+          description: Started the passwordless sign in/up process.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deviceId:
+                    description: This should be saved on the starting device to enable the manual code entry flow.
+                    type: string
+                    example: test@test.com
+
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500' 
+
+  /{apiBasePath}/signinup/token/consume:
+    post:
+      tags:
+        - Passwordless Recipe
+      operationId: passwordlessSignInUpConsume
+      description: |
+        Finish sign in/up process with passwordless
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/passwordlessRid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/passwordlessTryUseTokenRequest'
+                - $ref: '#/components/schemas/passwordlessTryUseCodeRequest'
+      responses:
+        '200':
+          description: Signin/up a user
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/passwordlessConsumeResponse'
+                  - $ref: '#/components/schemas/wrongCredentialsWithTryCountResponse'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500' 
+
   /{apiBasePath}/signout:
     post:
       tags:
@@ -1040,7 +1109,14 @@ components:
       example: thirdpartyemailpassword
       schema:
         type: string
-    
+
+    passwordlessRid:
+      name: rid
+      in: header
+      example: passwordless
+      schema:
+        type: string
+
     emailVerificationRid:
       name: rid
       in: header
@@ -1095,7 +1171,7 @@ components:
         $ref: '#/components/schemas/cookie'
       
   responses:
-    
+
     500:
       description: error code 500
       content:
@@ -1149,6 +1225,16 @@ components:
         email:
           type: string
           example: johndoe@gmail.com
+
+    passwordlessUser:
+      type: object
+      properties:
+        id:
+          type: string
+          example: fa7a0841-b533-4478-95533-0fde890c3483
+        userIdentifier:
+          type: string
+          example: johndoe@gmail.com
     
     thirdPartyId:
       type: string
@@ -1179,8 +1265,38 @@ components:
           value:
             type: string
       example: [ {id: email, value: johndoe@gmail.com},{id: password, value: testPass123}]
-    
-    
+
+    passwordlessStartSignInRequest:
+      type: object
+      properties:
+        userIdentifier: 
+          type: string
+          example: test@test.com
+      required:
+        - userIdentifier
+
+    passwordlessTryUseTokenRequest: 
+      type: object
+      properties:
+        urlCode:
+          type: string
+          example: b10lbT_SnDC4flA6Fn7pE5TtG5k5NfigLef4QMBeGA8
+      required:
+        - urlCode
+
+    passwordlessTryUseCodeRequest: 
+      type: object
+      properties:
+        deviceId:
+          type: string
+          example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
+        userInputCode:
+          type: string
+          example: 432123
+      required:
+        - deviceId
+        - userInputCode
+
     signInResponse:
       type: object
       properties:
@@ -1214,7 +1330,18 @@ components:
         createdNewUser:
           type: boolean
           example: true
-    
+
+    passwordlessConsumeResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/statusOK'
+        createdNewUser:
+          type: boolean
+          example: true
+        user:
+          $ref: '#/components/schemas/passwordlessUser'
+
     passwordResetResponse:
       type: object
       properties:
@@ -1247,7 +1374,18 @@ components:
         status:
           type: string
           enum: ['WRONG_CREDENTIALS_ERROR']
-    
+
+    wrongCredentialsWithTryCountResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ['WRONG_CREDENTIALS_ERROR']
+
+        triesLeft:
+          type: number
+          example: 2
+ 
     noEmailGivenByProviderResponse:
       type: object
       properties:
