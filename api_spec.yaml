@@ -30,7 +30,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/passwordlessStartSignInRequest'
+              type: object
+              properties:
+                userIdentifier: 
+                  type: string
+                  example: test@test.com
+              required:
+                - userIdentifier
 
       responses:
         '200':
@@ -43,7 +49,8 @@ paths:
                   deviceId:
                     description: This should be saved on the starting device to enable the manual code entry flow.
                     type: string
-                    example: test@test.com
+                    nullable: true
+                    example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
 
         '404':
           $ref: '#/components/responses/404'
@@ -66,17 +73,76 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/passwordlessTryUseTokenRequest'
-                - $ref: '#/components/schemas/passwordlessTryUseCodeRequest'
+                - type: object
+                  properties:
+                    urlCode:
+                      type: string
+                      example: b10lbT_SnDC4flA6Fn7pE5TtG5k5NfigLef4QMBeGA8
+                  required:
+                    - urlCode
+
+                - type: object
+                  properties:
+                    deviceId:
+                      type: string
+                      example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
+                    userInputCode:
+                      type: string
+                      example: 432123
+                  required:
+                    - deviceId
+                    - userInputCode
       responses:
         '200':
           description: Signin/up a user
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            
+            anti-csrf:
+              description: This will only be here if enabled by the user
+              schema:
+                $ref: '#/components/schemas/token'
+            front-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            id-refresh-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                enum: ['id-refresh-token, anti-csrf, front-token']
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/passwordlessConsumeResponse'
-                  - $ref: '#/components/schemas/wrongCredentialsWithTryCountResponse'
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      createdNewUser:
+                        type: boolean
+                        example: true
+                      user:
+                        $ref: '#/components/schemas/passwordlessUser'
+
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['INCORRECT_USER_INPUT_CODE_ERROR']
+
+                      triesLeft:
+                        type: number
+                        example: 2
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['RESTART_FLOW_ERROR']
         
         '404':
           $ref: '#/components/responses/404'
@@ -1266,37 +1332,6 @@ components:
             type: string
       example: [ {id: email, value: johndoe@gmail.com},{id: password, value: testPass123}]
 
-    passwordlessStartSignInRequest:
-      type: object
-      properties:
-        userIdentifier: 
-          type: string
-          example: test@test.com
-      required:
-        - userIdentifier
-
-    passwordlessTryUseTokenRequest: 
-      type: object
-      properties:
-        urlCode:
-          type: string
-          example: b10lbT_SnDC4flA6Fn7pE5TtG5k5NfigLef4QMBeGA8
-      required:
-        - urlCode
-
-    passwordlessTryUseCodeRequest: 
-      type: object
-      properties:
-        deviceId:
-          type: string
-          example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
-        userInputCode:
-          type: string
-          example: 432123
-      required:
-        - deviceId
-        - userInputCode
-
     signInResponse:
       type: object
       properties:
@@ -1331,17 +1366,6 @@ components:
           type: boolean
           example: true
 
-    passwordlessConsumeResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/statusOK'
-        createdNewUser:
-          type: boolean
-          example: true
-        user:
-          $ref: '#/components/schemas/passwordlessUser'
-
     passwordResetResponse:
       type: object
       properties:
@@ -1374,17 +1398,6 @@ components:
         status:
           type: string
           enum: ['WRONG_CREDENTIALS_ERROR']
-
-    wrongCredentialsWithTryCountResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          enum: ['WRONG_CREDENTIALS_ERROR']
-
-        triesLeft:
-          type: number
-          example: 2
  
     noEmailGivenByProviderResponse:
       type: object
