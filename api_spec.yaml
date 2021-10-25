@@ -2,7 +2,7 @@ openapi: 3.0.0
 servers: []
 info:
   description: Frontend Driver Interface http requests-responses
-  version: "1.10.0"
+  version: "1.11.0"
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
@@ -16,7 +16,7 @@ tags:
   - name: JWT Recipe
   - name: Other APIs not related to a Recipe
 paths:
-  /{apiBasePath}/signinup/token:
+  /{apiBasePath}/signinup/code:
     post:
       tags:
         - Passwordless Recipe
@@ -30,13 +30,19 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                userIdentifier: 
-                  type: string
-                  example: test@test.com
-              required:
-                - userIdentifier
+              oneOf:
+                - type: object
+                  properties:
+                    email: 
+                      $ref: '#/components/schemas/email'
+                  required:
+                    - email
+                - type: object
+                  properties:
+                    phoneNumber:
+                      $ref: '#/components/schemas/phoneNumber'
+                  required:
+                    - phoneNumber
 
       responses:
         '200':
@@ -44,13 +50,15 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  deviceId:
-                    description: This should be saved on the starting device to enable the manual code entry flow.
-                    type: string
-                    nullable: true
-                    example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
+                oneOf:
+                  - type: object
+                    properties:
+                      deviceId:
+                        description: This should be saved on the starting device to enable the manual code entry flow.
+                        type: string
+                        nullable: true
+                        example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
+                  - $ref: '#/components/schemas/fieldErrorResponse'
 
         '404':
           $ref: '#/components/responses/404'
@@ -58,7 +66,7 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
 
-  /{apiBasePath}/signinup/token/consume:
+  /{apiBasePath}/signinup/code/consume:
     post:
       tags:
         - Passwordless Recipe
@@ -143,6 +151,8 @@ paths:
                       status:
                         type: string
                         enum: ['RESTART_FLOW_ERROR']
+                  
+                  - $ref: '#/components/schemas/thirdPartyFieldErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1282,25 +1292,36 @@ components:
       type: string
       enum: ['email', 'password']
     
+    userId:
+      type: string
+      example: fa7a0841-b533-4478-95533-0fde890c3483
+
     user:
       type: object
       properties:
         id:
-          type: string
-          example: fa7a0841-b533-4478-95533-0fde890c3483
+          $ref: '#/components/schemas/userId'
         email:
           type: string
           example: johndoe@gmail.com
+
+    email:
+      type: string
+      example: johndoe@gmail.com
+
+    phoneNumber:
+      type: string
+      example: '0036701234567'
 
     passwordlessUser:
       type: object
       properties:
         id:
-          type: string
-          example: fa7a0841-b533-4478-95533-0fde890c3483
-        userIdentifier:
-          type: string
-          example: johndoe@gmail.com
+          $ref: '#/components/schemas/userId'
+        email:
+          $ref: '#/components/schemas/email'
+        phoneNumber:
+          $ref: '#/components/schemas/phoneNumber'
     
     thirdPartyId:
       type: string
@@ -1415,7 +1436,7 @@ components:
         error: 
           type: string
           example: 'Error Message'
-    
+
     internalError:
       type: string
       enum: 
