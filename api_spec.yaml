@@ -53,12 +53,14 @@ paths:
                 oneOf:
                   - type: object
                     properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
                       deviceId:
                         description: This should be saved on the starting device to enable the manual code entry flow.
                         type: string
                         nullable: true
                         example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
-                  - $ref: '#/components/schemas/fieldErrorResponse'
+                  - $ref: '#/components/schemas/genericErrorResponse'
 
         '404':
           $ref: '#/components/responses/404'
@@ -83,11 +85,11 @@ paths:
               oneOf:
                 - type: object
                   properties:
-                    urlCode:
+                    linkCode:
                       type: string
                       example: b10lbT_SnDC4flA6Fn7pE5TtG5k5NfigLef4QMBeGA8
                   required:
-                    - urlCode
+                    - linkCode
 
                 - type: object
                   properties:
@@ -152,7 +154,7 @@ paths:
                         type: string
                         enum: ['RESTART_FLOW_ERROR']
                   
-                  - $ref: '#/components/schemas/thirdPartyFieldErrorResponse'
+                  - $ref: '#/components/schemas/genericErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1413,6 +1415,16 @@ components:
                 type: string
                 example: "Error Message"
       
+    genericErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ['GENERIC_ERROR']
+        message:
+          type: string
+          example: "Error Message"
+
     wrongCredentialsResponse:
       type: object
       properties:
