@@ -2,7 +2,7 @@ openapi: 3.0.0
 servers: []
 info:
   description: Frontend Driver Interface http requests-responses
-  version: "1.10.0"
+  version: "1.11.0"
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
@@ -11,10 +11,157 @@ tags:
   - name: EmailPassword Recipe
   - name: ThirdParty Recipe
   - name: ThirdPartyEmailPassword Recipe
+  - name: Passwordless Recipe
   - name: EmailVerification Recipe
   - name: JWT Recipe
   - name: Other APIs not related to a Recipe
 paths:
+  /{apiBasePath}/signinup/code:
+    post:
+      tags:
+        - Passwordless Recipe
+      operationId: passwordlessSignInUpStart
+      description: |
+        Start sign in/up process with passwordless
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/passwordlessRid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  properties:
+                    email: 
+                      $ref: '#/components/schemas/email'
+                  required:
+                    - email
+                - type: object
+                  properties:
+                    phoneNumber:
+                      $ref: '#/components/schemas/phoneNumber'
+                  required:
+                    - phoneNumber
+
+      responses:
+        '200':
+          description: Started the passwordless sign in/up process.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      deviceId:
+                        description: This should be saved on the starting device to enable the manual code entry flow.
+                        type: string
+                        nullable: true
+                        example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
+                  - $ref: '#/components/schemas/genericErrorResponse'
+
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500' 
+
+  /{apiBasePath}/signinup/code/consume:
+    post:
+      tags:
+        - Passwordless Recipe
+      operationId: passwordlessSignInUpConsume
+      description: |
+        Finish sign in/up process with passwordless
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/passwordlessRid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  properties:
+                    linkCode:
+                      type: string
+                      example: b10lbT_SnDC4flA6Fn7pE5TtG5k5NfigLef4QMBeGA8
+                  required:
+                    - linkCode
+
+                - type: object
+                  properties:
+                    deviceId:
+                      type: string
+                      example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
+                    userInputCode:
+                      type: string
+                      example: 432123
+                  required:
+                    - deviceId
+                    - userInputCode
+      responses:
+        '200':
+          description: Signin/up a user
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            
+            anti-csrf:
+              description: This will only be here if enabled by the user
+              schema:
+                $ref: '#/components/schemas/token'
+            front-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            id-refresh-token:
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                enum: ['id-refresh-token, anti-csrf, front-token']
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      createdNewUser:
+                        type: boolean
+                        example: true
+                      user:
+                        $ref: '#/components/schemas/passwordlessUser'
+
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['INCORRECT_USER_INPUT_CODE_ERROR']
+
+                      triesLeft:
+                        type: number
+                        example: 2
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['RESTART_FLOW_ERROR']
+                  
+                  - $ref: '#/components/schemas/genericErrorResponse'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500' 
+
   /{apiBasePath}/signout:
     post:
       tags:
@@ -1040,7 +1187,14 @@ components:
       example: thirdpartyemailpassword
       schema:
         type: string
-    
+
+    passwordlessRid:
+      name: rid
+      in: header
+      example: passwordless
+      schema:
+        type: string
+
     emailVerificationRid:
       name: rid
       in: header
@@ -1095,7 +1249,7 @@ components:
         $ref: '#/components/schemas/cookie'
       
   responses:
-    
+
     500:
       description: error code 500
       content:
@@ -1140,15 +1294,36 @@ components:
       type: string
       enum: ['email', 'password']
     
+    userId:
+      type: string
+      example: fa7a0841-b533-4478-95533-0fde890c3483
+
     user:
       type: object
       properties:
         id:
-          type: string
-          example: fa7a0841-b533-4478-95533-0fde890c3483
+          $ref: '#/components/schemas/userId'
         email:
           type: string
           example: johndoe@gmail.com
+
+    email:
+      type: string
+      example: johndoe@gmail.com
+
+    phoneNumber:
+      type: string
+      example: '0036701234567'
+
+    passwordlessUser:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/userId'
+        email:
+          $ref: '#/components/schemas/email'
+        phoneNumber:
+          $ref: '#/components/schemas/phoneNumber'
     
     thirdPartyId:
       type: string
@@ -1179,8 +1354,7 @@ components:
           value:
             type: string
       example: [ {id: email, value: johndoe@gmail.com},{id: password, value: testPass123}]
-    
-    
+
     signInResponse:
       type: object
       properties:
@@ -1214,7 +1388,7 @@ components:
         createdNewUser:
           type: boolean
           example: true
-    
+
     passwordResetResponse:
       type: object
       properties:
@@ -1241,13 +1415,23 @@ components:
                 type: string
                 example: "Error Message"
       
+    genericErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ['GENERIC_ERROR']
+        message:
+          type: string
+          example: "Error Message"
+
     wrongCredentialsResponse:
       type: object
       properties:
         status:
           type: string
           enum: ['WRONG_CREDENTIALS_ERROR']
-    
+ 
     noEmailGivenByProviderResponse:
       type: object
       properties:
@@ -1264,7 +1448,7 @@ components:
         error: 
           type: string
           example: 'Error Message'
-    
+
     internalError:
       type: string
       enum: 
