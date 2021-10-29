@@ -14,7 +14,6 @@ tags:
   - name: Passwordless Recipe
   - name: EmailVerification Recipe
   - name: JWT Recipe
-  - name: Other APIs not related to a Recipe
 paths:
   /{apiBasePath}/signinup/code:
     post:
@@ -1128,48 +1127,7 @@ paths:
           $ref: '#/components/responses/404'
         
         '500':
-          $ref: '#/components/responses/500'
-  
-  /{apiBasePath}/status:
-    get:
-      tags:
-        - Other APIs not related to a Recipe
-      description: |
-        Health Check API
-      parameters:
-        - $ref: '#/components/parameters/apiBasePath'
-      responses:
-        '200':
-          description: Health Check API
-          content:
-            application/json:
-              schema:
-                type: object
-                description: Status with an optional message
-                properties:
-                  status:
-                    type: string
-                    enum: ["OK"]
-                  message:
-                    type: string
-                    
-              
-        '400':
-          $ref: '#/components/responses/400'
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          description: error code 500
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    
+          $ref: '#/components/responses/500'                    
       
 components:
   parameters:
