@@ -550,6 +550,7 @@ paths:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/thirdPartyRid'
       requestBody:
+        description: Should contain one of code or authCodeResponse 
         content:
           application/json:
             schema:
@@ -561,6 +562,8 @@ paths:
                   $ref: '#/components/schemas/thirdPartyId'
                 code: 
                   $ref: '#/components/schemas/code'
+                authCodeResponse:
+                  $ref: '#/components/schemas/authCodeResponse'
       responses:
         '200':
           description: Signin/up a user
@@ -857,6 +860,7 @@ paths:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
       requestBody:
+        description: Should contain one of code or authCodeResponse 
         content:
           application/json:
             schema:
@@ -868,6 +872,8 @@ paths:
                   $ref: '#/components/schemas/thirdPartyId'
                 code: 
                   $ref: '#/components/schemas/code'
+                authCodeResponse:
+                  $ref: '#/components/schemas/authCodeResponse'
       responses:
         '200':
           description: Signin/up a user
@@ -1346,6 +1352,17 @@ components:
     
     code:
       $ref: '#/components/schemas/token'
+      
+    authCodeResponse:
+      description: Can contain random data other than the two listed below
+      type: object
+      required:
+        - access_token
+      properties:
+        access_token:
+          type: string
+        id_token:
+          type: string
       
     redirectURI: 
       type: string
