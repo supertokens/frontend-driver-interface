@@ -555,8 +555,8 @@ paths:
             schema:
               type: object
               properties:
-                redirect_uri:
-                  $ref: '#/components/schemas/redirect_uri'
+                redirectURI:
+                  $ref: '#/components/schemas/redirectURI'
                 thirdPartyId:
                   $ref: '#/components/schemas/thirdPartyId'
                 code: 
@@ -862,8 +862,8 @@ paths:
             schema:
               type: object
               properties:
-                redirect_uri:
-                  $ref: '#/components/schemas/redirect_uri'
+                redirectURI:
+                  $ref: '#/components/schemas/redirectURI'
                 thirdPartyId:
                   $ref: '#/components/schemas/thirdPartyId'
                 code: 
@@ -1347,7 +1347,7 @@ components:
     code:
       $ref: '#/components/schemas/token'
       
-    redirect_uri: 
+    redirectURI: 
       type: string
       example: https://yourdomain.com/callback
     
