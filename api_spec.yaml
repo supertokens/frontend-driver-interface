@@ -35,12 +35,16 @@ paths:
                   properties:
                     email: 
                       $ref: '#/components/schemas/email'
+                    deviceId:
+                      $ref: '#/components/schemas/deviceId'
                   required:
                     - email
                 - type: object
                   properties:
                     phoneNumber:
                       $ref: '#/components/schemas/phoneNumber'
+                    deviceId:
+                      $ref: '#/components/schemas/deviceId'
                   required:
                     - phoneNumber
 
@@ -56,11 +60,13 @@ paths:
                       status:
                         $ref: '#/components/schemas/statusOK'
                       deviceId:
-                        description: This should be saved on the starting device to enable the manual code entry flow.
-                        type: string
-                        nullable: true
-                        example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
+                        $ref: '#/components/schemas/deviceId'
                   - $ref: '#/components/schemas/genericErrorResponse'
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['RESTART_FLOW']
 
         '404':
           $ref: '#/components/responses/404'
@@ -1314,6 +1320,11 @@ components:
     phoneNumber:
       type: string
       example: '0036701234567'
+
+    deviceId:
+      type: string
+      description: This should be saved on the starting device to enable the manual code entry flow.
+      example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
 
     passwordlessUser:
       type: object
