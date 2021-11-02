@@ -496,7 +496,6 @@ paths:
         Handles sign in with the apple.
       parameters: 
         - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyRid'
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -839,7 +838,6 @@ paths:
         Handles sign in with the apple.
       parameters: 
         - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
       requestBody:
         content:
           application/x-www-form-urlencoded:
