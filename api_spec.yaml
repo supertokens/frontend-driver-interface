@@ -549,7 +549,7 @@ paths:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/thirdPartyRid'
       requestBody:
-        description: Should contain one of code or authCodeResponse 
+        description: Should contain one of code or authCodeResponse, clientId is optional 
         content:
           application/json:
             schema:
@@ -563,6 +563,9 @@ paths:
                   $ref: '#/components/schemas/code'
                 authCodeResponse:
                   $ref: '#/components/schemas/authCodeResponse'
+                clientId:
+                  type: string
+                  example: "6779ef20e7...5817b79602"
       responses:
         '200':
           description: Signin/up a user
@@ -890,7 +893,7 @@ paths:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
       requestBody:
-        description: Should contain one of code or authCodeResponse 
+        description: Should contain one of code or authCodeResponse, clientId is optional
         content:
           application/json:
             schema:
@@ -904,6 +907,9 @@ paths:
                   $ref: '#/components/schemas/code'
                 authCodeResponse:
                   $ref: '#/components/schemas/authCodeResponse'
+                clientId:
+                  type: string
+                  example: "6779ef20e7...5817b79602"
       responses:
         '200':
           description: Signin/up a user
