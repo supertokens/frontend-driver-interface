@@ -14,7 +14,6 @@ tags:
   - name: Passwordless Recipe
   - name: EmailVerification Recipe
   - name: JWT Recipe
-  - name: Other APIs not related to a Recipe
 paths:
   /{apiBasePath}/signinup/code:
     post:
@@ -556,17 +555,23 @@ paths:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/thirdPartyRid'
       requestBody:
+        description: Should contain one of code or authCodeResponse, clientId is optional 
         content:
           application/json:
             schema:
               type: object
               properties:
-                redirect_uri:
-                  $ref: '#/components/schemas/redirect_uri'
+                redirectURI:
+                  $ref: '#/components/schemas/redirectURI'
                 thirdPartyId:
                   $ref: '#/components/schemas/thirdPartyId'
                 code: 
                   $ref: '#/components/schemas/code'
+                authCodeResponse:
+                  $ref: '#/components/schemas/authCodeResponse'
+                clientId:
+                  type: string
+                  example: "6779ef20e7...5817b79602"
       responses:
         '200':
           description: Signin/up a user
@@ -637,6 +642,37 @@ paths:
         
         '500':
           $ref: '#/components/responses/500' 
+  
+  /{apiBasePath}/callback/apple:
+    post:
+      tags:
+        - ThirdParty Recipe
+      operationId: thirdPartyCallbackApple
+      description: |
+        Handles sign in with the apple.
+      parameters: 
+        - $ref: '#/components/parameters/apiBasePath'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: "The Authorization code which will be exchanged for an access token"
+                state:
+                  type: string
+                  description: "A unique string used to mitigate CSRF attacks"
+      responses:
+        '200':
+          description: Returns an HTML page which will redirect the user to the client's app.
+          
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
   
   /{apiBasePath}/signin⠀:
     post:
@@ -863,17 +899,23 @@ paths:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
       requestBody:
+        description: Should contain one of code or authCodeResponse, clientId is optional
         content:
           application/json:
             schema:
               type: object
               properties:
-                redirect_uri:
-                  $ref: '#/components/schemas/redirect_uri'
+                redirectURI:
+                  $ref: '#/components/schemas/redirectURI'
                 thirdPartyId:
                   $ref: '#/components/schemas/thirdPartyId'
                 code: 
                   $ref: '#/components/schemas/code'
+                authCodeResponse:
+                  $ref: '#/components/schemas/authCodeResponse'
+                clientId:
+                  type: string
+                  example: "6779ef20e7...5817b79602"
       responses:
         '200':
           description: Signin/up a user
@@ -943,7 +985,39 @@ paths:
           $ref: '#/components/responses/404'
         
         '500':
-          $ref: '#/components/responses/500' 
+          $ref: '#/components/responses/500'
+  
+  
+  /{apiBasePath}/callback/apple⠀:
+    post:
+      tags:
+        - ThirdPartyEmailPassword Recipe
+      operationId: thirdPartyEmailPasswordCallbackApple
+      description: |
+        Handles sign in with the apple.
+      parameters: 
+        - $ref: '#/components/parameters/apiBasePath'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: "The Authorization code which will be exchanged for an access token"
+                state:
+                  type: string
+                  description: "A unique string used to mitigate CSRF attacks"
+      responses:
+        '200':
+          description: Returns an HTML page which will redirect the user to the client's app.
+          
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
   
   
   
@@ -1128,41 +1202,7 @@ paths:
           $ref: '#/components/responses/404'
         
         '500':
-          $ref: '#/components/responses/500'
-  
-  /{apiBasePath}/status:
-    get:
-      tags:
-        - Other APIs not related to a Recipe
-      description: |
-        Health Check API
-      parameters:
-        - $ref: '#/components/parameters/apiBasePath'
-      responses:
-        '200':
-          description: Health Check API
-          content:
-            application/json:
-              schema:
-                type: object
-                description: Status with an optional message
-                properties:
-                  status:
-                    type: string
-                    enum: ["OK"]
-                  message:
-                    type: string
-                    
-              
-        '400':
-          $ref: '#/components/responses/400'
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'
-                    
+          $ref: '#/components/responses/500'                    
       
 components:
   parameters:
@@ -1351,7 +1391,18 @@ components:
     code:
       $ref: '#/components/schemas/token'
       
-    redirect_uri: 
+    authCodeResponse:
+      description: Can contain random data other than the two listed below
+      type: object
+      required:
+        - access_token
+      properties:
+        access_token:
+          type: string
+        id_token:
+          type: string
+      
+    redirectURI: 
       type: string
       example: https://yourdomain.com/callback
     
