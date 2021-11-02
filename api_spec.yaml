@@ -487,6 +487,39 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
   
+  /{apiBasePath}/callback/apple:
+    post:
+      tags:
+        - ThirdParty Recipe
+      operationId: thirdPartyCallbackApple
+      description: |
+        Handles sign in with the apple.
+      parameters: 
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/thirdPartyRid'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: "The Authorization code which will be exchanged for an access token"
+                state:
+                  type: string
+                  description: "A unique string used to mitigate CSRF attacks"
+      responses:
+        '200':
+          description: Returns an HTML page which will redirect the user to the client's app.
+          
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+  
   /{apiBasePath}/signin⠀:
     post:
       tags:
@@ -795,7 +828,41 @@ paths:
           $ref: '#/components/responses/404'
         
         '500':
-          $ref: '#/components/responses/500' 
+          $ref: '#/components/responses/500'
+  
+  
+  /{apiBasePath}/callback/apple⠀:
+    post:
+      tags:
+        - ThirdPartyEmailPassword Recipe
+      operationId: thirdPartyEmailPasswordCallbackApple
+      description: |
+        Handles sign in with the apple.
+      parameters: 
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: "The Authorization code which will be exchanged for an access token"
+                state:
+                  type: string
+                  description: "A unique string used to mitigate CSRF attacks"
+      responses:
+        '200':
+          description: Returns an HTML page which will redirect the user to the client's app.
+          
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
   
   
   
