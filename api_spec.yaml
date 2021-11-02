@@ -513,7 +513,6 @@ paths:
         '200':
           description: Returns an HTML page which will redirect the user to the client's app.
           
-        
         '404':
           $ref: '#/components/responses/404'
         
@@ -857,7 +856,6 @@ paths:
         '200':
           description: Returns an HTML page which will redirect the user to the client's app.
           
-        
         '404':
           $ref: '#/components/responses/404'
         
