@@ -65,7 +65,7 @@ paths:
                     properties:
                       status:
                         type: string
-                        enum: ['RESTART_FLOW']
+                        enum: ['RESTART_FLOW_ERROR']
 
         '404':
           $ref: '#/components/responses/404'
