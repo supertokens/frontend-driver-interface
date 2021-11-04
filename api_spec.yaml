@@ -34,18 +34,20 @@ paths:
                   properties:
                     email: 
                       $ref: '#/components/schemas/email'
-                    deviceId:
-                      $ref: '#/components/schemas/deviceId'
                   required:
                     - email
                 - type: object
                   properties:
                     phoneNumber:
                       $ref: '#/components/schemas/phoneNumber'
+                  required:
+                    - phoneNumber
+                - type: object
+                  properties:
                     deviceId:
                       $ref: '#/components/schemas/deviceId'
                   required:
-                    - phoneNumber
+                    - deviceId
 
       responses:
         '200':
@@ -60,6 +62,9 @@ paths:
                         $ref: '#/components/schemas/statusOK'
                       deviceId:
                         $ref: '#/components/schemas/deviceId'
+                      flowType:
+                        type: string
+                        enum: ['LINK', 'USER_INPUT_CODE_AND_LINK', 'USER_INPUT_CODE']
                   - $ref: '#/components/schemas/genericErrorResponse'
                   - type: object
                     properties:
