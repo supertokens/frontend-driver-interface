@@ -155,9 +155,12 @@ paths:
                         type: string
                         enum: ['INCORRECT_USER_INPUT_CODE_ERROR']
 
-                      triesLeft:
+                      failedCodeInputs:
                         type: number
                         example: 2
+                      maximumCodeInputAttempts:
+                        type: number
+                        example: 5
                   - type: object
                     properties:
                       status:
