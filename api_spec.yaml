@@ -62,6 +62,8 @@ paths:
                         $ref: '#/components/schemas/statusOK'
                       deviceId:
                         $ref: '#/components/schemas/deviceId'
+                      loginAttemptId:
+                        $ref: '#/components/schemas/loginAttemptId'
                       flowType:
                         type: string
                         enum: ['LINK', 'USER_INPUT_CODE_AND_LINK', 'USER_INPUT_CODE']
@@ -95,21 +97,26 @@ paths:
               oneOf:
                 - type: object
                   properties:
+                    loginAttemptId:
+                      $ref: '#/components/schemas/loginAttemptId'
                     linkCode:
                       type: string
                       example: b10lbT_SnDC4flA6Fn7pE5TtG5k5NfigLef4QMBeGA8
                   required:
+                    - loginAttemptId
                     - linkCode
 
                 - type: object
                   properties:
+                    loginAttemptId:
+                      $ref: '#/components/schemas/loginAttemptId'
                     deviceId:
-                      type: string
-                      example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
+                      $ref: '#/components/schemas/deviceId'
                     userInputCode:
                       type: string
                       example: 432123
                   required:
+                    - loginAttemptId
                     - deviceId
                     - userInputCode
       responses:
@@ -154,7 +161,7 @@ paths:
                       status:
                         type: string
                         enum: ['INCORRECT_USER_INPUT_CODE_ERROR']
-
+                      
                       failedCodeInputs:
                         type: number
                         example: 2
@@ -1373,6 +1380,11 @@ components:
       type: string
       description: This should be saved on the starting device to enable the manual code entry flow.
       example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
+
+    loginAttemptId:
+      type: string
+      description: An identifier that used to identify the login attempt/device.
+      example: kFmkPQEAJtACiT2w/K8fndEuNm+XozJXSZSlWEr+iGs=
 
     passwordlessUser:
       type: object
