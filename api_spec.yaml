@@ -46,8 +46,11 @@ paths:
                   properties:
                     deviceId:
                       $ref: '#/components/schemas/deviceId'
+                    loginAttemptId:
+                      $ref: '#/components/schemas/loginAttemptId'
                   required:
                     - deviceId
+                    - loginAttemptId
 
       responses:
         '200':
