@@ -165,7 +165,7 @@ paths:
                         type: string
                         enum: ['INCORRECT_USER_INPUT_CODE_ERROR']
                       
-                      failedCodeInputs:
+                      failedCodeInputAttemptCount:
                         type: number
                         example: 2
                       maximumCodeInputAttempts:
