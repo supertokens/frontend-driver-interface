@@ -629,7 +629,8 @@ paths:
                     $ref: '#/components/schemas/statusOK'
                   url:
                     type: string
-                    example: https://yourdomain.com/authorize?
+                    example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
+
         
         '404':
           $ref: '#/components/responses/404'
@@ -973,7 +974,7 @@ paths:
                     $ref: '#/components/schemas/statusOK'
                   url:
                     type: string
-                    example: https://yourdomain.com/authorize?
+                    example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
         
         '404':
           $ref: '#/components/responses/404'
