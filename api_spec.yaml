@@ -163,7 +163,7 @@ paths:
                     properties:
                       status:
                         type: string
-                        enum: ['INCORRECT_USER_INPUT_CODE_ERROR']
+                        enum: ['INCORRECT_USER_INPUT_CODE_ERROR', 'EXPIRED_USER_INPUT_CODE_ERROR']
                       
                       failedCodeInputAttemptCount:
                         type: number
