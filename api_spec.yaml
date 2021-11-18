@@ -69,7 +69,7 @@ paths:
                         $ref: '#/components/schemas/loginAttemptId'
                       flowType:
                         type: string
-                        enum: ['LINK', 'USER_INPUT_CODE_AND_LINK', 'USER_INPUT_CODE']
+                        enum: ['MAGIC_LINK', 'USER_INPUT_CODE_AND_MAGIC_LINK', 'USER_INPUT_CODE']
                   - $ref: '#/components/schemas/genericErrorResponse'
                   - type: object
                     properties:
