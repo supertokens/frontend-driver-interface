@@ -46,11 +46,11 @@ paths:
                   properties:
                     deviceId:
                       $ref: '#/components/schemas/deviceId'
-                    loginAttemptId:
-                      $ref: '#/components/schemas/loginAttemptId'
+                    preAuthSessionId:
+                      $ref: '#/components/schemas/preAuthSessionId'
                   required:
                     - deviceId
-                    - loginAttemptId
+                    - preAuthSessionId
 
       responses:
         '200':
@@ -65,8 +65,8 @@ paths:
                         $ref: '#/components/schemas/statusOK'
                       deviceId:
                         $ref: '#/components/schemas/deviceId'
-                      loginAttemptId:
-                        $ref: '#/components/schemas/loginAttemptId'
+                      preAuthSessionId:
+                        $ref: '#/components/schemas/preAuthSessionId'
                       flowType:
                         type: string
                         enum: ['MAGIC_LINK', 'USER_INPUT_CODE_AND_MAGIC_LINK', 'USER_INPUT_CODE']
@@ -100,26 +100,26 @@ paths:
               oneOf:
                 - type: object
                   properties:
-                    loginAttemptId:
-                      $ref: '#/components/schemas/loginAttemptId'
+                    preAuthSessionId:
+                      $ref: '#/components/schemas/preAuthSessionId'
                     linkCode:
                       type: string
                       example: b10lbT_SnDC4flA6Fn7pE5TtG5k5NfigLef4QMBeGA8
                   required:
-                    - loginAttemptId
+                    - preAuthSessionId
                     - linkCode
 
                 - type: object
                   properties:
-                    loginAttemptId:
-                      $ref: '#/components/schemas/loginAttemptId'
+                    preAuthSessionId:
+                      $ref: '#/components/schemas/preAuthSessionId'
                     deviceId:
                       $ref: '#/components/schemas/deviceId'
                     userInputCode:
                       type: string
                       example: 432123
                   required:
-                    - loginAttemptId
+                    - preAuthSessionId
                     - deviceId
                     - userInputCode
       responses:
@@ -1453,7 +1453,7 @@ components:
       description: This should be saved on the starting device to enable the manual code entry flow.
       example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
 
-    loginAttemptId:
+    preAuthSessionId:
       type: string
       description: An identifier that used to identify the login attempt/device.
       example: kFmkPQEAJtACiT2w/K8fndEuNm+XozJXSZSlWEr+iGs=
