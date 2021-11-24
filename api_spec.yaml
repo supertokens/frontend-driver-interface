@@ -1574,7 +1574,7 @@ components:
       properties:
         status:
           type: string
-          enum: ['GENERIC_ERROR']
+          enum: ['GENERAL_ERROR']
         message:
           type: string
           example: "Error Message"
