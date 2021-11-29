@@ -42,15 +42,6 @@ paths:
                       $ref: '#/components/schemas/phoneNumber'
                   required:
                     - phoneNumber
-                - type: object
-                  properties:
-                    deviceId:
-                      $ref: '#/components/schemas/deviceId'
-                    preAuthSessionId:
-                      $ref: '#/components/schemas/preAuthSessionId'
-                  required:
-                    - deviceId
-                    - preAuthSessionId
 
       responses:
         '200':
@@ -71,17 +62,56 @@ paths:
                         type: string
                         enum: ['MAGIC_LINK', 'USER_INPUT_CODE_AND_MAGIC_LINK', 'USER_INPUT_CODE']
                   - $ref: '#/components/schemas/genericErrorResponse'
-                  - type: object
-                    properties:
-                      status:
-                        type: string
-                        enum: ['RESTART_FLOW_ERROR']
 
         '404':
           $ref: '#/components/responses/404'
         
         '500':
           $ref: '#/components/responses/500' 
+
+  /{apiBasePath}/signinup/code/resend:
+    post:
+      tags:
+        - Passwordless Recipe
+      operationId: passwordlessSignInUpResend
+      description: |
+        Resend passwordless code
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/passwordlessRid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceId:
+                  $ref: '#/components/schemas/deviceId'
+                preAuthSessionId:
+                  $ref: '#/components/schemas/preAuthSessionId'
+              required:
+                - deviceId
+                - preAuthSessionId
+
+      responses:
+        '200':
+          description: Started the passwordless sign in/up process.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['OK', 'RESTART_FLOW_ERROR']
+                  - $ref: '#/components/schemas/genericErrorResponse'
+
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
 
   /{apiBasePath}/signinup/code/consume:
     post:
