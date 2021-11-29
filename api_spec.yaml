@@ -246,7 +246,7 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
 
-  /{apiBasePath}/signup/phoneNumber/exists:
+  /{apiBasePath}/signup/phonenumber/exists:
     get:
       tags:
         - Passwordless Recipe
