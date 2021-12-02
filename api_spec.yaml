@@ -1272,6 +1272,9 @@ components:
         email:
           type: string
           example: johndoe@gmail.com
+        timeJoined:
+          type: number
+          example: 1638433545183
 
     email:
       type: string
@@ -1290,6 +1293,9 @@ components:
           $ref: '#/components/schemas/email'
         phoneNumber:
           $ref: '#/components/schemas/phoneNumber'
+        timeJoined:
+          type: number
+          example: 1638433545183
     
     thirdPartyId:
       type: string
