@@ -364,81 +364,6 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
           
-  /example-create-new-session:
-    post:
-      tags:
-        - Session Recipe
-      operationId: createNewSession
-      description: |
-        Note: This endpoint does not exist, it is an example endpoint.
-      parameters: 
-        - $ref: '#/components/parameters/rid'
-      responses:
-        '200':
-          description: create a new session
-          headers:
-            Set-Cookie:
-              schema:
-                type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            anti-csrf:
-              description: This will only be here if enabled by the user
-              schema:
-                $ref: '#/components/schemas/token'
-            front-token:
-              schema:
-                $ref: '#/components/schemas/token'
-            id-refresh-token:
-              schema:
-                $ref: '#/components/schemas/token'
-            Access-Control-Expose-Headers:
-              schema:
-                type: string
-                enum: ['id-refresh-token', 'anti-csrf', 'front-token']
-          
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500' 
-  
-  /example-verify-session:
-    post:
-      tags:
-        - Session Recipe
-      operationId: verifySession
-      description: |
-        Note: This endpoint does not exist, it is an example endpoint.
-      parameters:
-        - $ref: '#/components/parameters/rid'
-        - $ref: '#/components/parameters/anti-csrf'
-        - $ref: '#/components/parameters/sAccessToken'
-        - $ref: '#/components/parameters/sIdRefreshToken'
-      responses:
-        '200':
-          description: verify session
-          headers:
-            sAccessToken:
-              description: Is sent if the session gets refreshed or regenerated.
-              schema:
-                type: string
-                example: sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax;
-            front-token:
-              description: Is sent if the session gets refreshed or regenerated.
-              schema:
-                $ref: '#/components/schemas/token'
-            Access-Control-Expose-Headers:
-              description: Is sent if the session gets refreshed or regenerated.
-              schema:
-                type: string
-                example: 'front-token'
-          
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500' 
-      
   
   /{apiBasePath}/signin:
     post:
@@ -744,7 +669,8 @@ paths:
                     $ref: '#/components/schemas/statusOK'
                   url:
                     type: string
-                    example: https://yourdomain.com/authorize?
+                    example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
+
         
         '404':
           $ref: '#/components/responses/404'
@@ -1088,7 +1014,7 @@ paths:
                     $ref: '#/components/schemas/statusOK'
                   url:
                     type: string
-                    example: https://yourdomain.com/authorize?
+                    example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
         
         '404':
           $ref: '#/components/responses/404'
@@ -1469,6 +1395,9 @@ components:
         email:
           type: string
           example: johndoe@gmail.com
+        timeJoined:
+          type: number
+          example: 1638433545183
 
     email:
       type: string
@@ -1497,6 +1426,9 @@ components:
           $ref: '#/components/schemas/email'
         phoneNumber:
           $ref: '#/components/schemas/phoneNumber'
+        timeJoined:
+          type: number
+          example: 1638433545183
     
     thirdPartyId:
       type: string
