@@ -1115,6 +1115,9 @@ components:
         email:
           type: string
           example: johndoe@gmail.com
+        timeJoined:
+          type: number
+          example: 1638433545183
     
     thirdPartyId:
       type: string
