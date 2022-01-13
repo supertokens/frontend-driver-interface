@@ -2,7 +2,7 @@ openapi: 3.0.0
 servers: []
 info:
   description: Frontend Driver Interface http requests-responses
-  version: "1.11.0"
+  version: "1.12.0"
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
@@ -55,10 +55,12 @@ paths:
                       status:
                         $ref: '#/components/schemas/statusOK'
                       deviceId:
-                        description: This should be saved on the starting device to enable the manual code entry flow.
+                        $ref: '#/components/schemas/deviceId'
+                      preAuthSessionId:
+                        $ref: '#/components/schemas/preAuthSessionId'
+                      flowType:
                         type: string
-                        nullable: true
-                        example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
+                        enum: ['MAGIC_LINK', 'USER_INPUT_CODE_AND_MAGIC_LINK', 'USER_INPUT_CODE']
                   - $ref: '#/components/schemas/genericErrorResponse'
 
         '404':
@@ -66,6 +68,50 @@ paths:
         
         '500':
           $ref: '#/components/responses/500' 
+
+  /{apiBasePath}/signinup/code/resend:
+    post:
+      tags:
+        - Passwordless Recipe
+      operationId: passwordlessSignInUpResend
+      description: |
+        Resend passwordless code
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/passwordlessRid'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceId:
+                  $ref: '#/components/schemas/deviceId'
+                preAuthSessionId:
+                  $ref: '#/components/schemas/preAuthSessionId'
+              required:
+                - deviceId
+                - preAuthSessionId
+
+      responses:
+        '200':
+          description: Started the passwordless sign in/up process.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['OK', 'RESTART_FLOW_ERROR']
+                  - $ref: '#/components/schemas/genericErrorResponse'
+
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
 
   /{apiBasePath}/signinup/code/consume:
     post:
@@ -84,21 +130,26 @@ paths:
               oneOf:
                 - type: object
                   properties:
+                    preAuthSessionId:
+                      $ref: '#/components/schemas/preAuthSessionId'
                     linkCode:
                       type: string
                       example: b10lbT_SnDC4flA6Fn7pE5TtG5k5NfigLef4QMBeGA8
                   required:
+                    - preAuthSessionId
                     - linkCode
 
                 - type: object
                   properties:
+                    preAuthSessionId:
+                      $ref: '#/components/schemas/preAuthSessionId'
                     deviceId:
-                      type: string
-                      example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
+                      $ref: '#/components/schemas/deviceId'
                     userInputCode:
                       type: string
                       example: 432123
                   required:
+                    - preAuthSessionId
                     - deviceId
                     - userInputCode
       responses:
@@ -142,11 +193,14 @@ paths:
                     properties:
                       status:
                         type: string
-                        enum: ['INCORRECT_USER_INPUT_CODE_ERROR']
-
-                      triesLeft:
+                        enum: ['INCORRECT_USER_INPUT_CODE_ERROR', 'EXPIRED_USER_INPUT_CODE_ERROR']
+                      
+                      failedCodeInputAttemptCount:
                         type: number
                         example: 2
+                      maximumCodeInputAttempts:
+                        type: number
+                        example: 5
                   - type: object
                     properties:
                       status:
@@ -154,6 +208,67 @@ paths:
                         enum: ['RESTART_FLOW_ERROR']
                   
                   - $ref: '#/components/schemas/genericErrorResponse'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500' 
+
+  /{apiBasePath}/signup/email/exists⠀⠀:
+    get:
+      tags:
+        - Passwordless Recipe
+      operationId: passwordlessEmailExists
+      description: |
+        Check if an email exists
+        Note that there is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/passwordlessRid'
+        - $ref: '#/components/parameters/email'
+      responses:
+        '200':
+          description: Checks if an email exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/statusOK'
+                  exists:
+                    $ref: '#/components/schemas/exists'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500' 
+
+  /{apiBasePath}/signup/phonenumber/exists:
+    get:
+      tags:
+        - Passwordless Recipe
+      operationId: passwordlessPhoneNumberExists
+      description: |
+        Check if an email exists
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/passwordlessRid'
+        - $ref: '#/components/parameters/phoneNumber'
+      responses:
+        '200':
+          description: Checks if an email exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/statusOK'
+                  exists:
+                    $ref: '#/components/schemas/exists'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1192,6 +1307,14 @@ components:
       schema:
         type: string
         example: johndoe@gmail.com
+
+    phoneNumber:
+      name: phoneNumber
+      in: query
+      required: true
+      schema:
+        type: string
+        example: '0036701234567'
     
     sRefreshToken:
       in: cookie
@@ -1283,6 +1406,16 @@ components:
     phoneNumber:
       type: string
       example: '0036701234567'
+
+    deviceId:
+      type: string
+      description: This should be saved on the starting device to enable the manual code entry flow.
+      example: TU/52WOcktSv99zqaAZuWJG9BSoS0aRLfCbep8rFEwk=
+
+    preAuthSessionId:
+      type: string
+      description: An identifier that used to identify the login attempt/device.
+      example: kFmkPQEAJtACiT2w/K8fndEuNm+XozJXSZSlWEr+iGs=
 
     passwordlessUser:
       type: object
@@ -1403,7 +1536,7 @@ components:
       properties:
         status:
           type: string
-          enum: ['GENERIC_ERROR']
+          enum: ['GENERAL_ERROR']
         message:
           type: string
           example: "Error Message"
