@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.11.0]
 
+### Added 
+- OpenId Recipe
+  - adds  `/{apiBasePath}/.well-known/openid-configuration` GET
+
 ## [1.10.0]
 
 ### Added
