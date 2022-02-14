@@ -2,7 +2,7 @@ openapi: 3.0.0
 servers: []
 info:
   description: These are the APIs exposed by our backend SDK. To be consumed by the frontend only.
-  version: "1.12.1"
+  version: "1.13.0"
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
