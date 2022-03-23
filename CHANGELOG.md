@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added 
 - ThirdPartyPasswordless recipe APIs
-  - adds `/signinup/code`                 POST
-  - adds `/signinup/code/resend`          POST
-  - adds `/signinup/code/consume`         POST
-  - adds `/signup/email/exists`           GET
-  - adds `/signup/phoneNumber/exists`     GET
+  - adds `{apiBasePath}/signinup/code`                 POST
+  - adds `{apiBasePath}/signinup/code/resend`          POST
+  - adds `{apiBasePath}/signinup/code/consume`         POST
+  - adds `{apiBasePath}/signup/email/exists`           GET
+  - adds `{apiBasePath}/signup/phoneNumber/exists`     GET
   - adds `{apiBasePath}/signinup`         POST
   - adds `{apiBasePath}/authorisationurl` GET
   - adds `{apiBasePath}/callback/apple`   GET
@@ -24,10 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - passwordless recipe APIs
-  - `/signinup/code`
-  - `/signinup/code/consume`
-  - `/signup/email/exists`
-  - `/signup/phoneNumber/exists`
+  - `{apiBasePath}/signinup/code`
+  - `{apiBasePath}/signinup/code/consume`
+  - `{apiBasePath}/signup/email/exists`
+  - `{apiBasePath}/signup/phoneNumber/exists`
 
 ## [1.11.0]
 
