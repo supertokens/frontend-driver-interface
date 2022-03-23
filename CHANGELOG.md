@@ -5,10 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [1.13.0]
+
+### Added 
+- ThirdPartyPasswordless recipe APIs
+  - adds `/signinup/code`                 POST
+  - adds `/signinup/code/resend`          POST
+  - adds `/signinup/code/consume`         POST
+  - adds `/signup/email/exists`           GET
+  - adds `/signup/phoneNumber/exists`     GET
+  - adds `{apiBasePath}/signinup`         POST
+  - adds `{apiBasePath}/authorisationurl` GET
+  - adds `{apiBasePath}/callback/apple`   GET
+
+
 
 ## [1.12.0]
 
-## Added
+### Added
 - passwordless recipe APIs
   - `/signinup/code`
   - `/signinup/code/consume`
