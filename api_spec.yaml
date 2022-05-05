@@ -2,7 +2,7 @@ openapi: 3.0.0
 servers: []
 info:
   description: These are the APIs exposed by our backend SDK. To be consumed by the frontend only.
-  version: "1.13.0"
+  version: "1.13.1"
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
@@ -1837,7 +1837,29 @@ components:
     userId:
       type: string
       example: fa7a0841-b533-4478-95533-0fde890c3483
-
+    
+    thirdPartyUser:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/userId'
+        email:
+          type: string
+          example: johndoe@gmail.com
+        timeJoined:
+          type: number
+          example: 1638433545183
+        thirdParty:
+          type: object
+          properties:
+            id:
+              type: string
+              example: google
+            userId:
+              type: string
+              example: rq238mrq2389rvq123213
+            
+        
     user:
       type: object
       properties:
@@ -1951,7 +1973,7 @@ components:
         status:
           $ref: '#/components/schemas/statusOK'
         user:
-          $ref: '#/components/schemas/user'
+          $ref: '#/components/schemas/thirdPartyUser'
         createdNewUser:
           type: boolean
           example: true
