@@ -1856,7 +1856,8 @@ components:
               type: string
               example: google
             userId:
-              $ref: '#/components/schemas/userId'
+              type: string
+              example: rq238mrq2389rvq123213
             
         
     user:
