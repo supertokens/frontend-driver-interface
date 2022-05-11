@@ -2,7 +2,7 @@ openapi: 3.0.0
 servers: []
 info:
   description: These are the APIs exposed by our backend SDK. To be consumed by the frontend only.
-  version: "1.13.1"
+  version: "1.13.2"
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
@@ -695,6 +695,9 @@ paths:
       parameters: 
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/rid'
+        - $ref: '#/components/parameters/anti-csrf'
+        - $ref: '#/components/parameters/sIdRefreshToken'
+        - $ref: '#/components/parameters/sRefreshToken'
       requestBody:
         content:
           application/json:
