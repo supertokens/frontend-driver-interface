@@ -2,7 +2,7 @@ openapi: 3.0.0
 servers: []
 info:
   description: These are the APIs exposed by our backend SDK. To be consumed by the frontend only.
-  version: "1.13.2"
+  version: "1.14.0"
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
@@ -47,6 +47,7 @@ paths:
                       $ref: '#/components/schemas/phoneNumber'
                   required:
                     - phoneNumber
+                - $ref: '#/components/schemas/generalErrorResponse'
       responses:
         '200':
           description: Started the passwordless sign in/up process.
@@ -65,7 +66,7 @@ paths:
                       flowType:
                         type: string
                         enum: ['MAGIC_LINK', 'USER_INPUT_CODE_AND_MAGIC_LINK', 'USER_INPUT_CODE']
-                  - $ref: '#/components/schemas/genericErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
 
         '404':
           $ref: '#/components/responses/404'
@@ -111,7 +112,7 @@ paths:
                       status:
                         type: string
                         enum: ['OK', 'RESTART_FLOW_ERROR']
-                  - $ref: '#/components/schemas/genericErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
 
         '404':
           $ref: '#/components/responses/404'
@@ -215,7 +216,7 @@ paths:
                         type: string
                         enum: ['RESTART_FLOW_ERROR']
                   
-                  - $ref: '#/components/schemas/genericErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -242,12 +243,14 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    $ref: '#/components/schemas/statusOK'
-                  exists:
-                    $ref: '#/components/schemas/exists'
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      exists:
+                        $ref: '#/components/schemas/exists'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -274,12 +277,14 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    $ref: '#/components/schemas/statusOK'
-                  exists:
-                    $ref: '#/components/schemas/exists'
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      exists:
+                        $ref: '#/components/schemas/exists'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -346,7 +351,7 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/signinupResponse'
                   - $ref: '#/components/schemas/noEmailGivenByProviderResponse'
-                  - $ref: '#/components/schemas/thirdPartyFieldErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -376,13 +381,15 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    $ref: '#/components/schemas/statusOK'
-                  url:
-                    type: string
-                    example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      url:
+                        type: string
+                        example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -470,7 +477,7 @@ paths:
                       flowType:
                         type: string
                         enum: ['MAGIC_LINK', 'USER_INPUT_CODE_AND_MAGIC_LINK', 'USER_INPUT_CODE']
-                  - $ref: '#/components/schemas/genericErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
 
         '404':
           $ref: '#/components/responses/404'
@@ -514,7 +521,7 @@ paths:
                       status:
                         type: string
                         enum: ['OK', 'RESTART_FLOW_ERROR']
-                  - $ref: '#/components/schemas/genericErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
 
         '404':
           $ref: '#/components/responses/404'
@@ -616,7 +623,7 @@ paths:
                         type: string
                         enum: ['RESTART_FLOW_ERROR']
                   
-                  - $ref: '#/components/schemas/genericErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -642,12 +649,14 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    $ref: '#/components/schemas/statusOK'
-                  exists:
-                    $ref: '#/components/schemas/exists'
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      exists:
+                        $ref: '#/components/schemas/exists'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -672,12 +681,14 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    $ref: '#/components/schemas/statusOK'
-                  exists:
-                    $ref: '#/components/schemas/exists'
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      exists:
+                        $ref: '#/components/schemas/exists'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -722,10 +733,12 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    $ref: '#/components/schemas/statusOK'
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -825,6 +838,7 @@ paths:
                   - $ref: '#/components/schemas/signInResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
                   - $ref: '#/components/schemas/wrongCredentialsResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -879,6 +893,7 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/signupResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -903,12 +918,14 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    $ref: '#/components/schemas/statusOK'
-                  exists:
-                    $ref: '#/components/schemas/exists'
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      exists:
+                        $ref: '#/components/schemas/exists'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -944,6 +961,7 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/passwordResetTokenResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -983,6 +1001,7 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/passwordResetResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1047,7 +1066,7 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/signinupResponse'
                   - $ref: '#/components/schemas/noEmailGivenByProviderResponse'
-                  - $ref: '#/components/schemas/thirdPartyFieldErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1075,13 +1094,15 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    $ref: '#/components/schemas/statusOK'
-                  url:
-                    type: string
-                    example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      url:
+                        type: string
+                        example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
+                  - $ref: '#/components/schemas/generalErrorResponse'
 
         
         '404':
@@ -1169,6 +1190,7 @@ paths:
                   - $ref: '#/components/schemas/signInResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
                   - $ref: '#/components/schemas/wrongCredentialsResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1223,6 +1245,7 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/signupResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1248,12 +1271,14 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    $ref: '#/components/schemas/statusOK'
-                  exists:
-                    $ref: '#/components/schemas/exists'
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      exists:
+                        $ref: '#/components/schemas/exists'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1289,6 +1314,7 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/passwordResetTokenResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1328,6 +1354,7 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/passwordResetResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1392,7 +1419,7 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/signinupResponse'
                   - $ref: '#/components/schemas/noEmailGivenByProviderResponse'
-                  - $ref: '#/components/schemas/thirdPartyFieldErrorResponse'
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1420,13 +1447,15 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    $ref: '#/components/schemas/statusOK'
-                  url:
-                    type: string
-                    example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      url:
+                        type: string
+                        example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1502,11 +1531,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    enum: ['OK', 'EMAIL_ALREADY_VERIFIED_ERROR']
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['OK', 'EMAIL_ALREADY_VERIFIED_ERROR']
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1540,11 +1571,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    enum: ['OK', 'EMAIL_VERIFICATION_INVALID_TOKEN_ERROR']
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['OK', 'EMAIL_VERIFICATION_INVALID_TOKEN_ERROR']
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1585,13 +1618,15 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    $ref: '#/components/schemas/statusOK'
-                  isVerified:
-                    type: boolean
-                    example: true
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      isVerified:
+                        type: boolean
+                        example: true
+                  - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1614,33 +1649,35 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  keys:
-                    type: array
-                    items: 
-                      type: object
-                      description: A JWK that can be used to verify a JWT
-                      properties:
-                        alg:
-                          type: string
-                          description: The algorithm to use when creating the JWT.
-                          enum: ["RS256"]
-                        kty:
-                          type: string
-                          example: RSA
-                        use:
-                          type: string
-                          example: sig
-                        kid:
-                          type: string
-                          description: Unique identifier for the JWK
-                        n:
-                          type: string
-                          description: Modulus for the key
-                        e: 
-                          type: string
-                          description: Exponent for the key
+                oneOf:
+                  - type: object
+                    properties:
+                      keys:
+                        type: array
+                        items: 
+                          type: object
+                          description: A JWK that can be used to verify a JWT
+                          properties:
+                            alg:
+                              type: string
+                              description: The algorithm to use when creating the JWT.
+                              enum: ["RS256"]
+                            kty:
+                              type: string
+                              example: RSA
+                            use:
+                              type: string
+                              example: sig
+                            kid:
+                              type: string
+                              description: Unique identifier for the JWK
+                            n:
+                              type: string
+                              description: Modulus for the key
+                            e: 
+                              type: string
+                              description: Exponent for the key
+                  - $ref: '#/components/schemas/generalErrorResponse'
           
         '400':
           $ref: '#/components/responses/400'
@@ -1666,16 +1703,18 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  issuer:
-                    type: string
-                    description: URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier (https://openid.net/specs/openid-connect-discovery-1_0.html section 3)
-                    example: https://api.example.com/auth
-                  jwks_uri:
-                    type: string
-                    description: URL for fetching a list JsonWebKey, used for JWT signature verification. Refer to /jwt/jwks.json API in the JWT recipe for JWK details
-                    example: https://api.example.com/auth/jwt/jwks.json
+                oneOf:
+                  - type: object
+                    properties:
+                      issuer:
+                        type: string
+                        description: URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier (https://openid.net/specs/openid-connect-discovery-1_0.html section 3)
+                        example: https://api.example.com/auth
+                      jwks_uri:
+                        type: string
+                        description: URL for fetching a list JsonWebKey, used for JWT signature verification. Refer to /jwt/jwks.json API in the JWT recipe for JWK details
+                        example: https://api.example.com/auth/jwt/jwks.json
+                  - $ref: '#/components/schemas/generalErrorResponse'
 
         '400':
           $ref: '#/components/responses/400'
@@ -1823,6 +1862,16 @@ components:
       type: string
       enum:
         - OK
+        
+    generalErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - GENERAL_ERROR
+        message:
+          type: string
     
     token:
       type: string
@@ -2006,16 +2055,6 @@ components:
               error:
                 type: string
                 example: "Error Message"
-      
-    genericErrorResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          enum: ['GENERAL_ERROR']
-        message:
-          type: string
-          example: "Error Message"
 
     wrongCredentialsResponse:
       type: object
@@ -2030,16 +2069,6 @@ components:
         status: 
           type: string
           enum: ['NO_EMAIL_GIVEN_BY_PROVIDER']
-          
-    thirdPartyFieldErrorResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          enum: ['FIELD_ERROR']
-        error: 
-          type: string
-          example: 'Error Message'
 
     internalError:
       type: string
