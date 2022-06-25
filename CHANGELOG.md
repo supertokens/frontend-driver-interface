@@ -8,7 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.14.0] - 2022-06-24
 - Added `{status: "GENERAL_ERROR", message: string}` as a possible output to all APIs, except for session refresh and apple redirect.
 - Removed FIELD_ERROR status type from social sign in up APIs
-- 
 
 ## [1.13.2] - 2022-05-12
 - Adds missing required cookies for the signout API
