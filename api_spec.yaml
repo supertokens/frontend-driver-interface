@@ -2,7 +2,7 @@ openapi: 3.0.0
 servers: []
 info:
   description: These are the APIs exposed by our backend SDK. To be consumed by the frontend only.
-  version: "1.14.0"
+  version: "1.15.0"
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
@@ -1590,7 +1590,7 @@ paths:
         - EmailVerification Recipe
       operationId: getVerifyEmail
       description: |
-        Check if an email is verified
+        Checks if an email is verified and adds this information into the access token payload as well
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/emailVerificationRid'
@@ -1599,7 +1599,7 @@ paths:
         - $ref: '#/components/parameters/sIdRefreshToken'
       responses:
         '200':
-          description: check if an email is verified
+          description: Checks if an email is verified and adds this information into the access token payload as well
           headers:
             sAccessToken:
               description: Is sent if the session gets refreshed or regenerated.
@@ -1725,6 +1725,56 @@ paths:
         '500':
           $ref: '#/components/responses/500'  
       
+  /example:
+    get:
+      tags:
+        - App API
+      operationId: exampleAppAPI
+      description: |
+        API endpoint in your application, checked with `verifySession`
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      responses:
+        '200':
+          description: The session passed verification and went through the application code
+
+        '401':
+          description: The session doesn't exists or if it needs to be refreshed
+          content:
+            application/json:
+              schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      description: unauthorised or try refresh token
+                      example: try refresh token
+        
+        '403':
+          description: The session exists, but didn't pass a claim validator
+          content:
+            application/json:
+              schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: invalid claim
+                    claimValidationErrors:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: st-ev
+                          reason:
+                            type: object
+                            example: 
+                              message: "value does not exist"
+                              expectedValue: val
+                              actualValue: claimVal
+        
 components:
   parameters:
     rid:
