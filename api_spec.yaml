@@ -305,23 +305,47 @@ paths:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/thirdPartyPasswordlessRid'
       requestBody:
-        description: Should contain one of code or authCodeResponse, clientId is optional
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                redirectURI:
-                  $ref: '#/components/schemas/redirectURI'
-                thirdPartyId:
-                  $ref: '#/components/schemas/thirdPartyId'
-                code: 
-                  $ref: '#/components/schemas/code'
-                authCodeResponse:
-                  $ref: '#/components/schemas/authCodeResponse'
-                clientId:
-                  type: string
-                  example: "6779ef20e7...5817b79602"
+              oneOf:
+                - type: object
+                  required:
+                    - thirdPartyId
+                    - redirectURIInfo
+                  properties:
+                    thirdPartyId:
+                      $ref: '#/components/schemas/thirdPartyId'
+                    clientType:
+                      $ref: '#/components/schemas/clientType'
+                    tenantId:
+                      $ref: '#/components/schemas/tenantId'
+                    redirectURIInfo:
+                      type: object
+                      required:
+                        - redirectURIOnProviderDashboard
+                        - redirectURIQueryParams
+                      properties:
+                        redirectURIOnProviderDashboard:
+                          $ref: '#/components/schemas/redirectURI'
+                        redirectURIQueryParams:
+                          type: object
+                        pkceCodeVerifier:
+                          type: string
+                          example: abcd1234
+                - type: object
+                  required:
+                    - thirdPartyId
+                    - oAuthTokens
+                  properties:
+                    thirdPartyId:
+                      $ref: '#/components/schemas/thirdPartyId'
+                    clientType:
+                      $ref: '#/components/schemas/clientType'
+                    tenantId:
+                      $ref: '#/components/schemas/tenantId'
+                    oAuthTokens:
+                      type: object
       responses:
         '200':
           description: Signin/up a user
@@ -375,6 +399,20 @@ paths:
           name: thirdPartyId
           schema:
             $ref: '#/components/schemas/thirdPartyId'
+        - in: query
+          name: redirectURIOnProviderDashboard
+          schema:
+            $ref: '#/components/schemas/redirectURI'
+        - in: query
+          name: clientType
+          required: false
+          schema:
+            $ref: '#/components/schemas/clientType'
+        - in: query
+          name: tenantId
+          required: false
+          schema:
+            $ref: '#/components/schemas/tenantId'
       responses:
         '200':
           description: Get the OAuth authorisation URL
@@ -383,12 +421,18 @@ paths:
               schema:
                 oneOf:
                   - type: object
+                    required:
+                      - status
+                      - url
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
                       url:
                         type: string
                         example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
+                      pkceCodeVerifier:
+                        type: string
+                        example: abcd1234
                   - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
@@ -1020,23 +1064,47 @@ paths:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/thirdPartyRid'
       requestBody:
-        description: Should contain one of code or authCodeResponse, clientId is optional 
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                redirectURI:
-                  $ref: '#/components/schemas/redirectURI'
-                thirdPartyId:
-                  $ref: '#/components/schemas/thirdPartyId'
-                code: 
-                  $ref: '#/components/schemas/code'
-                authCodeResponse:
-                  $ref: '#/components/schemas/authCodeResponse'
-                clientId:
-                  type: string
-                  example: "6779ef20e7...5817b79602"
+              oneOf:
+                - type: object
+                  required:
+                    - thirdPartyId
+                    - redirectURIInfo
+                  properties:
+                    thirdPartyId:
+                      $ref: '#/components/schemas/thirdPartyId'
+                    clientType:
+                      $ref: '#/components/schemas/clientType'
+                    tenantId:
+                      $ref: '#/components/schemas/tenantId'
+                    redirectURIInfo:
+                      type: object
+                      required:
+                        - redirectURIOnProviderDashboard
+                        - redirectURIQueryParams
+                      properties:
+                        redirectURIOnProviderDashboard:
+                          $ref: '#/components/schemas/redirectURI'
+                        redirectURIQueryParams:
+                          type: object
+                        pkceCodeVerifier:
+                          type: string
+                          example: abcd1234
+                - type: object
+                  required:
+                    - thirdPartyId
+                    - oAuthTokens
+                  properties:
+                    thirdPartyId:
+                      $ref: '#/components/schemas/thirdPartyId'
+                    clientType:
+                      $ref: '#/components/schemas/clientType'
+                    tenantId:
+                      $ref: '#/components/schemas/tenantId'
+                    oAuthTokens:
+                      type: object
       responses:
         '200':
           description: Signin/up a user
@@ -1088,6 +1156,20 @@ paths:
           name: thirdPartyId
           schema:
             $ref: '#/components/schemas/thirdPartyId'
+        - in: query
+          name: redirectURIOnProviderDashboard
+          schema:
+            $ref: '#/components/schemas/redirectURI'
+        - in: query
+          name: clientType
+          required: false
+          schema:
+            $ref: '#/components/schemas/clientType'
+        - in: query
+          name: tenantId
+          required: false
+          schema:
+            $ref: '#/components/schemas/tenantId'
       responses:
         '200':
           description: Get the OAuth authorisation URL
@@ -1096,12 +1178,18 @@ paths:
               schema:
                 oneOf:
                   - type: object
+                    required:
+                      - status
+                      - url
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
                       url:
                         type: string
                         example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
+                      pkceCodeVerifier:
+                        type: string
+                        example: abcd1234
                   - $ref: '#/components/schemas/generalErrorResponse'
 
         
@@ -1373,23 +1461,47 @@ paths:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
       requestBody:
-        description: Should contain one of code or authCodeResponse, clientId is optional
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                redirectURI:
-                  $ref: '#/components/schemas/redirectURI'
-                thirdPartyId:
-                  $ref: '#/components/schemas/thirdPartyId'
-                code: 
-                  $ref: '#/components/schemas/code'
-                authCodeResponse:
-                  $ref: '#/components/schemas/authCodeResponse'
-                clientId:
-                  type: string
-                  example: "6779ef20e7...5817b79602"
+              oneOf:
+                - type: object
+                  required:
+                    - thirdPartyId
+                    - redirectURIInfo
+                  properties:
+                    thirdPartyId:
+                      $ref: '#/components/schemas/thirdPartyId'
+                    clientType:
+                      $ref: '#/components/schemas/clientType'
+                    tenantId:
+                      $ref: '#/components/schemas/tenantId'
+                    redirectURIInfo:
+                      type: object
+                      required:
+                        - redirectURIOnProviderDashboard
+                        - redirectURIQueryParams
+                      properties:
+                        redirectURIOnProviderDashboard:
+                          $ref: '#/components/schemas/redirectURI'
+                        redirectURIQueryParams:
+                          type: object
+                        pkceCodeVerifier:
+                          type: string
+                          example: abcd1234
+                - type: object
+                  required:
+                    - thirdPartyId
+                    - oAuthTokens
+                  properties:
+                    thirdPartyId:
+                      $ref: '#/components/schemas/thirdPartyId'
+                    clientType:
+                      $ref: '#/components/schemas/clientType'
+                    tenantId:
+                      $ref: '#/components/schemas/tenantId'
+                    oAuthTokens:
+                      type: object
       responses:
         '200':
           description: Signin/up a user
@@ -1441,6 +1553,20 @@ paths:
           name: thirdPartyId
           schema:
             $ref: '#/components/schemas/thirdPartyId'
+        - in: query
+          name: redirectURIOnProviderDashboard
+          schema:
+            $ref: '#/components/schemas/redirectURI'
+        - in: query
+          name: clientType
+          required: false
+          schema:
+            $ref: '#/components/schemas/clientType'
+        - in: query
+          name: tenantId
+          required: false
+          schema:
+            $ref: '#/components/schemas/tenantId'
       responses:
         '200':
           description: Get the OAuth authorisation URL
@@ -1449,12 +1575,18 @@ paths:
               schema:
                 oneOf:
                   - type: object
+                    required:
+                      - status
+                      - url
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
                       url:
                         type: string
                         example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
+                      pkceCodeVerifier:
+                        type: string
+                        example: abcd1234
                   - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
@@ -2035,6 +2167,14 @@ components:
       type: string
       example: https://yourdomain.com/callback
     
+    clientType: 
+      type: string
+      example: web
+
+    tenantId:
+      type: string
+      example: default
+
     formFields:
       type: array
       items:
