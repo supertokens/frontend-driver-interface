@@ -397,10 +397,12 @@ paths:
         - $ref: '#/components/parameters/thirdPartyPasswordlessRid'
         - in: query
           name: thirdPartyId
+          required: true
           schema:
             $ref: '#/components/schemas/thirdPartyId'
         - in: query
           name: redirectURIOnProviderDashboard
+          required: true
           schema:
             $ref: '#/components/schemas/redirectURI'
         - in: query
@@ -441,6 +443,53 @@ paths:
         '500':
           $ref: '#/components/responses/500'
   
+  /{apiBasePath}/providers⠀⠀:
+    get:
+      tags:
+        - ThirdPartyPasswordless Recipe
+      operationId: thirdPartyPasswordlessProviders
+      description: |
+        Get configured providers
+      parameters: 
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/thirdPartyPasswordlessRid'
+        - in: query
+          name: tenantId
+          required: false
+          schema:
+            $ref: '#/components/schemas/tenantId'
+      responses:
+        '200':
+          description: Get configured providers response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required:
+                      - status
+                      - providers
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      providers:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                            - id
+                          properties:
+                            id:
+                              $ref: '#/components/schemas/thirdPartyId'
+                            name:
+                              type: string
+                              example: Google
+                  - $ref: '#/components/schemas/generalErrorResponse'
+        '404':
+          $ref: '#/components/responses/404'        
+        '500':
+          $ref: '#/components/responses/500' 
+
   /{apiBasePath}/callback/apple⠀⠀:
     post:
       tags:
@@ -465,8 +514,8 @@ paths:
                   type: string
                   description: "A unique string used to mitigate CSRF attacks"
       responses:
-        '200':
-          description: Returns an HTML page which will redirect the user to the client's app.
+        '303':
+          description: Redirects the user to the client's app.
           
         '404':
           $ref: '#/components/responses/404'
@@ -1154,10 +1203,12 @@ paths:
         - $ref: '#/components/parameters/thirdPartyRid'
         - in: query
           name: thirdPartyId
+          required: true
           schema:
             $ref: '#/components/schemas/thirdPartyId'
         - in: query
           name: redirectURIOnProviderDashboard
+          required: true
           schema:
             $ref: '#/components/schemas/redirectURI'
         - in: query
@@ -1199,6 +1250,53 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
   
+  /{apiBasePath}/providers:
+    get:
+      tags:
+        - ThirdParty Recipe
+      operationId: providers
+      description: |
+        Get configured providers
+      parameters: 
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/thirdPartyRid'
+        - in: query
+          name: tenantId
+          required: false
+          schema:
+            $ref: '#/components/schemas/tenantId'
+      responses:
+        '200':
+          description: Get configured providers response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required:
+                      - status
+                      - providers
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      providers:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                            - id
+                          properties:
+                            id:
+                              $ref: '#/components/schemas/thirdPartyId'
+                            name:
+                              type: string
+                              example: Google
+                  - $ref: '#/components/schemas/generalErrorResponse'
+        '404':
+          $ref: '#/components/responses/404'        
+        '500':
+          $ref: '#/components/responses/500' 
+
   /{apiBasePath}/callback/apple:
     post:
       tags:
@@ -1221,8 +1319,8 @@ paths:
                   type: string
                   description: "A unique string used to mitigate CSRF attacks"
       responses:
-        '200':
-          description: Returns an HTML page which will redirect the user to the client's app.
+        '303':
+          description: Redirects the user to the client's app.
           
         '404':
           $ref: '#/components/responses/404'
@@ -1551,10 +1649,12 @@ paths:
         - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
         - in: query
           name: thirdPartyId
+          required: true
           schema:
             $ref: '#/components/schemas/thirdPartyId'
         - in: query
           name: redirectURIOnProviderDashboard
+          required: true
           schema:
             $ref: '#/components/schemas/redirectURI'
         - in: query
@@ -1595,7 +1695,53 @@ paths:
         '500':
           $ref: '#/components/responses/500'
   
-  
+  /{apiBasePath}/providers⠀:
+    get:
+      tags:
+        - ThirdPartyEmailPassword Recipe
+      operationId: thirdPartyEmailPasswordProviders
+      description: |
+        Get configured providers
+      parameters: 
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
+        - in: query
+          name: tenantId
+          required: false
+          schema:
+            $ref: '#/components/schemas/tenantId'
+      responses:
+        '200':
+          description: Get configured providers response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required:
+                      - status
+                      - providers
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      providers:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                            - id
+                          properties:
+                            id:
+                              $ref: '#/components/schemas/thirdPartyId'
+                            name:
+                              type: string
+                              example: Google
+                  - $ref: '#/components/schemas/generalErrorResponse'
+        '404':
+          $ref: '#/components/responses/404'        
+        '500':
+          $ref: '#/components/responses/500'
+
   /{apiBasePath}/callback/apple⠀:
     post:
       tags:
@@ -1618,8 +1764,8 @@ paths:
                   type: string
                   description: "A unique string used to mitigate CSRF attacks"
       responses:
-        '200':
-          description: Returns an HTML page which will redirect the user to the client's app.
+        '303':
+          description: Redirects the user to the client's app.
           
         '404':
           $ref: '#/components/responses/404'
