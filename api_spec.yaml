@@ -330,6 +330,9 @@ paths:
                           $ref: '#/components/schemas/redirectURI'
                         redirectURIQueryParams:
                           type: object
+                          example:
+                            code: "neqmpdsfuqe141m5lk437867masdf"
+                            state: "ljayfgqewertbh13245njw0"
                         pkceCodeVerifier:
                           type: string
                           example: abcd1234
@@ -345,7 +348,8 @@ paths:
                     tenantId:
                       $ref: '#/components/schemas/tenantId'
                     oAuthTokens:
-                      type: object
+                      $ref: '#/components/schemas/oAuthTokens'
+
       responses:
         '200':
           description: Signin/up a user
@@ -443,53 +447,6 @@ paths:
         '500':
           $ref: '#/components/responses/500'
   
-  /{apiBasePath}/providers⠀⠀:
-    get:
-      tags:
-        - ThirdPartyPasswordless Recipe
-      operationId: thirdPartyPasswordlessProviders
-      description: |
-        Get configured providers
-      parameters: 
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyPasswordlessRid'
-        - in: query
-          name: tenantId
-          required: false
-          schema:
-            $ref: '#/components/schemas/tenantId'
-      responses:
-        '200':
-          description: Get configured providers response
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    required:
-                      - status
-                      - providers
-                    properties:
-                      status:
-                        $ref: '#/components/schemas/statusOK'
-                      providers:
-                        type: array
-                        items:
-                          type: object
-                          required:
-                            - id
-                          properties:
-                            id:
-                              $ref: '#/components/schemas/thirdPartyId'
-                            name:
-                              type: string
-                              example: Google
-                  - $ref: '#/components/schemas/generalErrorResponse'
-        '404':
-          $ref: '#/components/responses/404'        
-        '500':
-          $ref: '#/components/responses/500' 
-
   /{apiBasePath}/callback/apple⠀⠀:
     post:
       tags:
@@ -1138,6 +1095,9 @@ paths:
                           $ref: '#/components/schemas/redirectURI'
                         redirectURIQueryParams:
                           type: object
+                          example:
+                            code: "neqmpdsfuqe141m5lk437867masdf"
+                            state: "ljayfgqewertbh13245njw0"
                         pkceCodeVerifier:
                           type: string
                           example: abcd1234
@@ -1153,7 +1113,7 @@ paths:
                     tenantId:
                       $ref: '#/components/schemas/tenantId'
                     oAuthTokens:
-                      type: object
+                      $ref: '#/components/schemas/oAuthTokens'
       responses:
         '200':
           description: Signin/up a user
@@ -1250,16 +1210,16 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
   
-  /{apiBasePath}/providers:
+  /{apiBasePath}/loginmethods:
     get:
       tags:
-        - ThirdParty Recipe
-      operationId: providers
+        - Multitenancy Recipe
+      operationId: loginmethods
       description: |
-        Get configured providers
+        Get enabled login methods
       parameters: 
         - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyRid'
+        - $ref: '#/components/parameters/multitenancyRid'
         - in: query
           name: tenantId
           required: false
@@ -1267,7 +1227,7 @@ paths:
             $ref: '#/components/schemas/tenantId'
       responses:
         '200':
-          description: Get configured providers response
+          description: Get enabled login methods
           content:
             application/json:
               schema:
@@ -1275,22 +1235,36 @@ paths:
                   - type: object
                     required:
                       - status
-                      - providers
+                      - recipes
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
-                      providers:
-                        type: array
-                        items:
-                          type: object
-                          required:
-                            - id
-                          properties:
-                            id:
-                              $ref: '#/components/schemas/thirdPartyId'
-                            name:
-                              type: string
-                              example: Google
+                      recipes:
+                        type: object
+                        required:
+                          - thirdParty
+                        properties:
+                          thirdParty:
+                            type: object
+                            required:
+                              - enabled
+                              - providers
+                            properties:
+                              enabled:
+                                type: boolean
+                                example: true
+                              providers:
+                                type: array
+                                items:
+                                  type: object
+                                  required:
+                                    - id
+                                  properties:
+                                    id:
+                                      $ref: '#/components/schemas/thirdPartyId'
+                                    name:
+                                      type: string
+                                      example: Google
                   - $ref: '#/components/schemas/generalErrorResponse'
         '404':
           $ref: '#/components/responses/404'        
@@ -1584,6 +1558,9 @@ paths:
                           $ref: '#/components/schemas/redirectURI'
                         redirectURIQueryParams:
                           type: object
+                          example:
+                            code: "neqmpdsfuqe141m5lk437867masdf"
+                            state: "ljayfgqewertbh13245njw0"
                         pkceCodeVerifier:
                           type: string
                           example: abcd1234
@@ -1599,7 +1576,7 @@ paths:
                     tenantId:
                       $ref: '#/components/schemas/tenantId'
                     oAuthTokens:
-                      type: object
+                      $ref: '#/components/schemas/oAuthTokens'
       responses:
         '200':
           description: Signin/up a user
@@ -1695,53 +1672,6 @@ paths:
         '500':
           $ref: '#/components/responses/500'
   
-  /{apiBasePath}/providers⠀:
-    get:
-      tags:
-        - ThirdPartyEmailPassword Recipe
-      operationId: thirdPartyEmailPasswordProviders
-      description: |
-        Get configured providers
-      parameters: 
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
-        - in: query
-          name: tenantId
-          required: false
-          schema:
-            $ref: '#/components/schemas/tenantId'
-      responses:
-        '200':
-          description: Get configured providers response
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    required:
-                      - status
-                      - providers
-                    properties:
-                      status:
-                        $ref: '#/components/schemas/statusOK'
-                      providers:
-                        type: array
-                        items:
-                          type: object
-                          required:
-                            - id
-                          properties:
-                            id:
-                              $ref: '#/components/schemas/thirdPartyId'
-                            name:
-                              type: string
-                              example: Google
-                  - $ref: '#/components/schemas/generalErrorResponse'
-        '404':
-          $ref: '#/components/responses/404'        
-        '500':
-          $ref: '#/components/responses/500'
-
   /{apiBasePath}/callback/apple⠀:
     post:
       tags:
@@ -2104,6 +2034,12 @@ components:
       schema:
         type: string
     
+    multitenancyRid:
+      name: rid
+      in: header
+      example: multitenancy
+      schema:
+        type: string
         
     anti-csrf:
       name: anti-csrf
@@ -2319,7 +2255,17 @@ components:
 
     tenantId:
       type: string
-      example: default
+      example: defaultTenantId
+    
+    oAuthTokens:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: ZTRiOTBjNz...jI5MTZlODkxw
+        id_token:
+          type: string
+          example: ZTRiOTBjNz...jI5MTZlODkxw
 
     formFields:
       type: array
