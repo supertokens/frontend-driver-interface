@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - adds `{apiBasePath}/loginmethods` GET
 
 ### Changed
-- ThirdParty, ThirdpartyEmailpassword and Thirdpartypasswordless recipes
+- Updates ThirdParty, ThirdpartyEmailpassword and Thirdpartypasswordless recipes to support multitenancy
   - Updates `{apiBasePath}/signinup`          POST
   - Updates `{apiBasePath}/authorisationurl`  GET
   - Updates `{apiBasePath}/callback/apple`    POST
