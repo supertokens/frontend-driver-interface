@@ -1236,7 +1236,7 @@ paths:
         - Multitenancy Recipe
       operationId: loginmethods
       description: |
-        Get enabled login methods
+        Get enabled login methods: Returns recipes with their enabled setting and recipe specific configuration.
 
         If the `tenantId` is specified and the tenant does not exist in the core, then this API results in a 422 error.
       parameters: 
