@@ -1247,6 +1247,11 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/tenantId'
+        - in: query
+          name: clientType
+          required: false
+          schema:
+            $ref: '#/components/schemas/clientType'
       responses:
         '200':
           description: Get enabled login methods
