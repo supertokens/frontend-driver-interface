@@ -1269,11 +1269,11 @@ paths:
                       recipes:
                         type: object
                         required:
-                          - emailpassword
-                          - thirdparty
+                          - emailPassword
+                          - thirdParty
                           - passwordless
                         properties:
-                          emailpassword:
+                          emailPassword:
                             type: object
                             required:
                               - enabled
@@ -1281,7 +1281,7 @@ paths:
                               enabled:
                                 type: boolean
                                 example: true
-                          thirdparty:
+                          thirdParty:
                             type: object
                             required:
                               - enabled
