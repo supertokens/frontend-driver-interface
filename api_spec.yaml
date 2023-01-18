@@ -2,7 +2,7 @@ openapi: 3.0.0
 servers: []
 info:
   description: These are the APIs exposed by our backend SDK. To be consumed by the frontend only.
-  version: "1.15.0"
+  version: "1.16.0"
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
@@ -166,24 +166,29 @@ paths:
           description: Signin/up a user
           headers:
             Set-Cookie:
+              description: In cookie-based sessions
               schema:
                 type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
+            st-refresh-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
             anti-csrf:
-              description: This will only be here if enabled by the user
+              description: If enabled by the user
               schema:
                 $ref: '#/components/schemas/token'
             front-token:
               schema:
                 $ref: '#/components/schemas/token'
-            id-refresh-token:
-              schema:
-                $ref: '#/components/schemas/token'
             Access-Control-Expose-Headers:
               schema:
                 type: string
-                enum: ['id-refresh-token, anti-csrf, front-token']
+                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
           content:
             application/json:
               schema:
@@ -327,24 +332,29 @@ paths:
           description: Signin/up a user
           headers:
             Set-Cookie:
+              description: In cookie-based sessions
               schema:
                 type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
+            st-refresh-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
             anti-csrf:
-              description: This will only be here if enabled by the user
+              description: If enabled by the user
               schema:
                 $ref: '#/components/schemas/token'
             front-token:
               schema:
                 $ref: '#/components/schemas/token'
-            id-refresh-token:
-              schema:
-                $ref: '#/components/schemas/token'
             Access-Control-Expose-Headers:
               schema:
                 type: string
-                enum: ['id-refresh-token, anti-csrf, front-token']
+                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
           content:
             application/json:
               schema:
@@ -573,24 +583,29 @@ paths:
           description: Signin/up a user
           headers:
             Set-Cookie:
+              description: In cookie-based sessions
               schema:
                 type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
+            st-refresh-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
             anti-csrf:
-              description: This will only be here if enabled by the user
+              description: If enabled by the user
               schema:
                 $ref: '#/components/schemas/token'
             front-token:
               schema:
                 $ref: '#/components/schemas/token'
-            id-refresh-token:
-              schema:
-                $ref: '#/components/schemas/token'
             Access-Control-Expose-Headers:
               schema:
                 type: string
-                enum: ['id-refresh-token, anti-csrf, front-token']
+                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
           content:
             application/json:
               schema:
@@ -703,12 +718,13 @@ paths:
       operationId: signout
       description: |
         Logout user
+      security:
+        - AccessTokenBearer: []
+        - AccessTokenCookie: []
       parameters: 
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/rid'
         - $ref: '#/components/parameters/anti-csrf'
-        - $ref: '#/components/parameters/sIdRefreshToken'
-        - $ref: '#/components/parameters/sRefreshToken'
       requestBody:
         content:
           application/json:
@@ -721,15 +737,25 @@ paths:
             Set-Cookie:
               schema:
                 type: string
-                example: 'sAccessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax sRefreshToken=; Path=/auth/session/refresh; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax sIdRefreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax'
-            id-refresh-token:
+                example: 'sAccessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax sRefreshToken=; Path=/auth/session/refresh; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: Set to an empty string to trigger token clearing in the client SDK
+              schema:
+                type: string
+                example: ""
+            st-refresh-token:
+              description: Set to an empty string to trigger token clearing in the client SDK
+              schema:
+                type: string
+                example: ""
+            front-token:
               schema:
                 type: string
                 example: remove
             Access-Control-Expose-Headers:
               schema:
                 type: string
-                example: id-refresh-token
+                example: front-token, st-access-token, st-refresh-token
           content:
             application/json:
               schema:
@@ -751,37 +777,43 @@ paths:
       tags:
         - Session Recipe
       operationId: refresh
+      security:
+        - RefreshTokenBearer: []
+        - RefreshTokenCookie: []
       description: |
         Refresh the user session
       parameters: 
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/rid'
         - $ref: '#/components/parameters/anti-csrf'
-        - $ref: '#/components/parameters/sIdRefreshToken'
-        - $ref: '#/components/parameters/sRefreshToken'
       responses:
         '200':
           description: Refresh users
           headers:
             Set-Cookie:
+              description: In cookie-based sessions
               schema:
                 type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
+            st-refresh-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
             anti-csrf:
-              description: This will only be here if enabled by the user
+              description: If enabled by the user
               schema:
                 $ref: '#/components/schemas/token'
             front-token:
               schema:
                 $ref: '#/components/schemas/token'
-            id-refresh-token:
-              schema:
-                $ref: '#/components/schemas/token'
             Access-Control-Expose-Headers:
               schema:
                 type: string
-                example: 'id-refresh-token, anti-csrf, front-token'
+                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
           
         '404':
           $ref: '#/components/responses/404'
@@ -813,24 +845,29 @@ paths:
           description: Sign in Response
           headers:
             Set-Cookie:
+              description: In cookie-based sessions
               schema:
                 type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
+            st-refresh-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
             anti-csrf:
-              description: This will only be here if enabled by the user
+              description: If enabled by the user
               schema:
                 $ref: '#/components/schemas/token'
             front-token:
               schema:
                 $ref: '#/components/schemas/token'
-            id-refresh-token:
-              schema:
-                $ref: '#/components/schemas/token'
             Access-Control-Expose-Headers:
               schema:
                 type: string
-                enum: ['id-refresh-token, anti-csrf, front-token']
+                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
           content:
             application/json:
               schema:
@@ -869,24 +906,29 @@ paths:
           description: Sign up Response
           headers:
             Set-Cookie:
+              description: In cookie-based sessions
               schema:
                 type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
+            st-refresh-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
             anti-csrf:
-              description: This will only be here if enabled by the user
+              description: If enabled by the user
               schema:
                 $ref: '#/components/schemas/token'
             front-token:
               schema:
                 $ref: '#/components/schemas/token'
-            id-refresh-token:
-              schema:
-                $ref: '#/components/schemas/token'
             Access-Control-Expose-Headers:
               schema:
                 type: string
-                enum: ['id-refresh-token, anti-csrf, front-token']
+                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
           content:
             application/json:
               schema:
@@ -1042,24 +1084,29 @@ paths:
           description: Signin/up a user
           headers:
             Set-Cookie:
+              description: In cookie-based sessions
               schema:
                 type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
+            st-refresh-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
             anti-csrf:
-              description: This will only be here if enabled by the user
+              description: If enabled by the user
               schema:
                 $ref: '#/components/schemas/token'
             front-token:
               schema:
                 $ref: '#/components/schemas/token'
-            id-refresh-token:
-              schema:
-                $ref: '#/components/schemas/token'
             Access-Control-Expose-Headers:
               schema:
                 type: string
-                enum: ['id-refresh-token, anti-csrf, front-token']
+                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
           content:
             application/json:
               schema:
@@ -1165,24 +1212,29 @@ paths:
           description: Sign in Response
           headers:
             Set-Cookie:
+              description: In cookie-based sessions
               schema:
                 type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
+            st-refresh-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
             anti-csrf:
-              description: This will only be here if enabled by the user
+              description: If enabled by the user
               schema:
                 $ref: '#/components/schemas/token'
             front-token:
               schema:
                 $ref: '#/components/schemas/token'
-            id-refresh-token:
-              schema:
-                $ref: '#/components/schemas/token'
             Access-Control-Expose-Headers:
               schema:
                 type: string
-                enum: ['id-refresh-token, anti-csrf, front-token']
+                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
           content:
             application/json:
               schema:
@@ -1221,24 +1273,29 @@ paths:
           description: Sign up Response
           headers:
             Set-Cookie:
+              description: In cookie-based sessions
               schema:
                 type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
+            st-refresh-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
             anti-csrf:
-              description: This will only be here if enabled by the user
+              description: If enabled by the user
               schema:
                 $ref: '#/components/schemas/token'
             front-token:
               schema:
                 $ref: '#/components/schemas/token'
-            id-refresh-token:
-              schema:
-                $ref: '#/components/schemas/token'
             Access-Control-Expose-Headers:
               schema:
                 type: string
-                enum: ['id-refresh-token, anti-csrf, front-token']
+                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
           content:
             application/json:
               schema:
@@ -1395,24 +1452,29 @@ paths:
           description: Signin/up a user
           headers:
             Set-Cookie:
+              description: In cookie-based sessions
               schema:
                 type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax; sIdRefreshToken=6ed3...6c0d; Path=/; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
+            st-refresh-token:
+              description: In header-based sessions
+              schema:
+                $ref: '#/components/schemas/token'
             anti-csrf:
-              description: This will only be here if enabled by the user
+              description: If enabled by the user
               schema:
                 $ref: '#/components/schemas/token'
             front-token:
               schema:
                 $ref: '#/components/schemas/token'
-            id-refresh-token:
-              schema:
-                $ref: '#/components/schemas/token'
             Access-Control-Expose-Headers:
               schema:
                 type: string
-                enum: ['id-refresh-token, anti-csrf, front-token']
+                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
           content:
             application/json:
               schema:
@@ -1508,26 +1570,12 @@ paths:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/emailVerificationRid'
         - $ref: '#/components/parameters/anti-csrf'
-        - $ref: '#/components/parameters/sAccessToken'
-        - $ref: '#/components/parameters/sIdRefreshToken'
+      security:
+        - AccessTokenBearer: []
+        - AccessTokenCookie: []
       responses:
         '200':
           description: Send email verification email
-          headers:
-            sAccessToken:
-              description: Is sent if the session gets refreshed or regenerated.
-              schema:
-                type: string
-                example: sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax;
-            front-token:
-              description: Is sent if the session gets refreshed or regenerated.
-              schema:
-                $ref: '#/components/schemas/token'
-            Access-Control-Expose-Headers:
-              description: Is sent if the session gets refreshed or regenerated.
-              schema:
-                type: string
-                example: 'front-token' 
           content:
             application/json:
               schema:
@@ -1595,26 +1643,35 @@ paths:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/emailVerificationRid'
         - $ref: '#/components/parameters/anti-csrf'
-        - $ref: '#/components/parameters/sAccessToken'
-        - $ref: '#/components/parameters/sIdRefreshToken'
+      security:
+        - AccessTokenBearer: []
+        - AccessTokenCookie: []
+
       responses:
         '200':
           description: Checks if an email is verified and adds this information into the access token payload as well
           headers:
-            sAccessToken:
-              description: Is sent if the session gets refreshed or regenerated.
+            Set-Cookie:
+              description: Sent in cookie-based sessions if the access token payload is updated
               schema:
                 type: string
-                example: sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax;
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: Sent in cookie-based sessions if the access token payload is updated
+              schema:
+                $ref: '#/components/schemas/token'
+            anti-csrf:
+              description: Sent if enabled by the user
+              schema:
+                $ref: '#/components/schemas/token'
             front-token:
-              description: Is sent if the session gets refreshed or regenerated.
+              description: Sent if the access token payload is updated
               schema:
                 $ref: '#/components/schemas/token'
             Access-Control-Expose-Headers:
-              description: Is sent if the session gets refreshed or regenerated.
               schema:
                 type: string
-                example: 'front-token'
+                example: 'anti-csrf, front-token, st-access-token'
           content:
             application/json:
               schema:
@@ -1858,27 +1915,7 @@ components:
       schema:
         type: string
         example: '0036701234567'
-    
-    sRefreshToken:
-      in: cookie
-      name: sRefreshToken
-      required: true
-      schema:
-        $ref: '#/components/schemas/cookie'
-    
-    sIdRefreshToken:
-      in: cookie
-      name: sIdRefreshToken
-      required: true
-      schema:
-        $ref: '#/components/schemas/cookie'
-    
-    sAccessToken:
-      in: cookie
-      name: sAccessToken
-      required: true
-      schema:
-        $ref: '#/components/schemas/cookie'
+
       
   responses:
 
@@ -2134,3 +2171,26 @@ components:
       type: string
       enum:
         - Not Found
+
+  securitySchemes:
+    AccessTokenCookie:
+      description: This is an HTTPOnly cookie, set by sign-in and refresh endpoints and present on requests that update the access token
+      type: apiKey
+      in: cookie
+      name: sAccessToken
+
+    AccessTokenBearer:
+      description: Returned as the "st-access-token" header from sign-in and refresh endpoints and present on requests that update the access token payload
+      type: http
+      scheme: bearer
+
+    RefreshTokenBearer:
+      description: This is an HTTPOnly cookie, set by sign-in and refresh endpoints
+      scheme: bearer
+      type: http
+
+    RefreshTokenCookie:
+      description: Returned as the "st-refresh-token" header from sign-in and refresh endpoints
+      type: apiKey
+      in: cookie
+      name: sRefreshToken
