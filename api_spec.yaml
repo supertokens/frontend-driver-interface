@@ -307,8 +307,6 @@ paths:
       description: |
         Signin/up a user using a Social Provider
 
-        If the `tenantId` is specified and the tenant does not exist in the core, then this API results in a 422 error.
-        
         Note: There is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
@@ -327,8 +325,6 @@ paths:
                       $ref: '#/components/schemas/thirdPartyId'
                     clientType:
                       $ref: '#/components/schemas/clientType'
-                    tenantId:
-                      $ref: '#/components/schemas/tenantId'
                     redirectURIInfo:
                       type: object
                       required:
@@ -354,8 +350,6 @@ paths:
                       $ref: '#/components/schemas/thirdPartyId'
                     clientType:
                       $ref: '#/components/schemas/clientType'
-                    tenantId:
-                      $ref: '#/components/schemas/tenantId'
                     oAuthTokens:
                       $ref: '#/components/schemas/oAuthTokens'
 
@@ -409,8 +403,6 @@ paths:
       description: |
         Get the thirdparty provider's authorisation URL to which the user should be redirected to.
 
-        If the `tenantId` is specified and the tenant does not exist in the core, then this API results in a 422 error.
-        
         Note: There is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
@@ -430,11 +422,6 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/clientType'
-        - in: query
-          name: tenantId
-          required: false
-          schema:
-            $ref: '#/components/schemas/tenantId'
       responses:
         '200':
           description: Get the OAuth authorisation URL
@@ -1112,8 +1099,6 @@ paths:
       operationId: signInUp
       description: |
         Signin/up a user
-
-        If the `tenantId` is specified and the tenant does not exist in the core, then this API results in a 422 error.
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/thirdPartyRid'
@@ -1131,8 +1116,6 @@ paths:
                       $ref: '#/components/schemas/thirdPartyId'
                     clientType:
                       $ref: '#/components/schemas/clientType'
-                    tenantId:
-                      $ref: '#/components/schemas/tenantId'
                     redirectURIInfo:
                       type: object
                       required:
@@ -1158,8 +1141,6 @@ paths:
                       $ref: '#/components/schemas/thirdPartyId'
                     clientType:
                       $ref: '#/components/schemas/clientType'
-                    tenantId:
-                      $ref: '#/components/schemas/tenantId'
                     oAuthTokens:
                       $ref: '#/components/schemas/oAuthTokens'
       responses:
@@ -1211,8 +1192,6 @@ paths:
       operationId: authorisationUrl
       description: |
         Get the thirdparty provider's authorisation URL to which the user should be redirected to.
-
-        If the `tenantId` is specified and the tenant does not exist in the core, then this API results in a 422 error.
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/thirdPartyRid'
@@ -1231,11 +1210,6 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/clientType'
-        - in: query
-          name: tenantId
-          required: false
-          schema:
-            $ref: '#/components/schemas/tenantId'
       responses:
         '200':
           description: Get the OAuth authorisation URL
@@ -1272,16 +1246,9 @@ paths:
       operationId: loginmethods
       description: |
         Get enabled login methods: Returns recipes with their enabled setting and recipe specific configuration.
-
-        If the `tenantId` is specified and the tenant does not exist in the core, then this API results in a 422 error.
       parameters: 
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/multitenancyRid'
-        - in: query
-          name: tenantId
-          required: false
-          schema:
-            $ref: '#/components/schemas/tenantId'
         - in: query
           name: clientType
           required: false
@@ -1620,8 +1587,6 @@ paths:
       description: |
         Signin/up a user using a Social Provider
 
-        If the `tenantId` is specified and the tenant does not exist in the core, then this API results in a 422 error.
-        
         Note: There is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
@@ -1640,8 +1605,6 @@ paths:
                       $ref: '#/components/schemas/thirdPartyId'
                     clientType:
                       $ref: '#/components/schemas/clientType'
-                    tenantId:
-                      $ref: '#/components/schemas/tenantId'
                     redirectURIInfo:
                       type: object
                       required:
@@ -1667,8 +1630,6 @@ paths:
                       $ref: '#/components/schemas/thirdPartyId'
                     clientType:
                       $ref: '#/components/schemas/clientType'
-                    tenantId:
-                      $ref: '#/components/schemas/tenantId'
                     oAuthTokens:
                       $ref: '#/components/schemas/oAuthTokens'
       responses:
@@ -1721,8 +1682,6 @@ paths:
       description: |
         Get the thirdparty provider's authorisation URL to which the user should be redirected to.
 
-        If the `tenantId` is specified and the tenant does not exist in the core, then this API results in a 422 error.
-        
         Note: There is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
@@ -1742,11 +1701,6 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/clientType'
-        - in: query
-          name: tenantId
-          required: false
-          schema:
-            $ref: '#/components/schemas/tenantId'
       responses:
         '200':
           description: Get the OAuth authorisation URL
@@ -2327,10 +2281,6 @@ components:
       type: string
       example: web
 
-    tenantId:
-      type: string
-      example: defaultTenantId
-    
     oAuthTokens:
       type: object
       properties:
