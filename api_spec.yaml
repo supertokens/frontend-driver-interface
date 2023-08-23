@@ -4,7 +4,7 @@ info:
   description: |
     These are the APIs exposed by our backend SDK. To be consumed by the frontend only.
     `<tenantId>` in all the APIs are optional. Its default value is `public`
-  version: "1.17.0"
+  version: "1.18.0"
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
@@ -49,7 +49,6 @@ paths:
                       $ref: '#/components/schemas/phoneNumber'
                   required:
                     - phoneNumber
-                - $ref: '#/components/schemas/generalErrorResponse'
       responses:
         '200':
           description: Started the passwordless sign in/up process.
@@ -68,6 +67,14 @@ paths:
                       flowType:
                         type: string
                         enum: ['MAGIC_LINK', 'USER_INPUT_CODE_AND_MAGIC_LINK', 'USER_INPUT_CODE']
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['SIGN_IN_UP_NOT_ALLOWED']
+                      reason:
+                        type: string
+                        example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
                   - $ref: '#/components/schemas/generalErrorResponse'
 
         '404':
@@ -199,11 +206,11 @@ paths:
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
-                      createdNewUser:
+                      createdNewRecipeUser:
                         type: boolean
                         example: true
                       user:
-                        $ref: '#/components/schemas/passwordlessUser'
+                        $ref: '#/components/schemas/user'
 
                   - type: object
                     properties:
@@ -222,6 +229,14 @@ paths:
                       status:
                         type: string
                         enum: ['RESTART_FLOW_ERROR']
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['SIGN_IN_UP_NOT_ALLOWED']
+                      reason:
+                        type: string
+                        example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
                   
                   - $ref: '#/components/schemas/generalErrorResponse'
         
@@ -386,7 +401,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/signinupResponse'
-                  - $ref: '#/components/schemas/noEmailGivenByProviderResponse'
+                  - $ref: '#/components/schemas/signinupErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
@@ -529,6 +544,14 @@ paths:
                       flowType:
                         type: string
                         enum: ['MAGIC_LINK', 'USER_INPUT_CODE_AND_MAGIC_LINK', 'USER_INPUT_CODE']
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['SIGN_IN_UP_NOT_ALLOWED']
+                      reason:
+                        type: string
+                        example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
                   - $ref: '#/components/schemas/generalErrorResponse'
 
         '404':
@@ -656,11 +679,11 @@ paths:
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
-                      createdNewUser:
+                      createdNewRecipeUser:
                         type: boolean
                         example: true
                       user:
-                        $ref: '#/components/schemas/passwordlessUser'
+                        $ref: '#/components/schemas/user'
 
                   - type: object
                     properties:
@@ -679,6 +702,14 @@ paths:
                       status:
                         type: string
                         enum: ['RESTART_FLOW_ERROR']
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['SIGN_IN_UP_NOT_ALLOWED']
+                      reason:
+                        type: string
+                        example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
                   
                   - $ref: '#/components/schemas/generalErrorResponse'
         
@@ -1043,6 +1074,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/passwordResetTokenResponse'
+                  - $ref: '#/components/schemas/passwordResetNotAllowedResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
@@ -1083,6 +1115,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/passwordResetResponse'
+                  - $ref: '#/components/schemas/passwordResetErrorResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
@@ -1176,7 +1209,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/signinupResponse'
-                  - $ref: '#/components/schemas/noEmailGivenByProviderResponse'
+                  - $ref: '#/components/schemas/signinupErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
@@ -1530,6 +1563,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/passwordResetTokenResponse'
+                  - $ref: '#/components/schemas/passwordResetNotAllowedResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
@@ -1570,6 +1604,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/passwordResetResponse'
+                  - $ref: '#/components/schemas/passwordResetErrorResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
@@ -1665,7 +1700,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/signinupResponse'
-                  - $ref: '#/components/schemas/noEmailGivenByProviderResponse'
+                  - $ref: '#/components/schemas/signinupErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
         '404':
@@ -2181,40 +2216,80 @@ components:
     userId:
       type: string
       example: fa7a0841-b533-4478-95533-0fde890c3483
-    
-    thirdPartyUser:
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/userId'
-        email:
-          type: string
-          example: johndoe@gmail.com
-        timeJoined:
-          type: number
-          example: 1638433545183
-        thirdParty:
-          type: object
-          properties:
-            id:
-              type: string
-              example: google
-            userId:
-              type: string
-              example: rq238mrq2389rvq123213
-            
-        
+
     user:
       type: object
       properties:
         id:
           $ref: '#/components/schemas/userId'
-        email:
-          type: string
-          example: johndoe@gmail.com
         timeJoined:
           type: number
           example: 1638433545183
+        isPrimaryUser:
+          type: boolean
+          example: true
+        tenantIds:
+          type: array
+          items:
+            type: string
+            example: public
+        emails:
+          type: array
+          items:
+            type: string
+            example: johndoe@gmail.com
+        phoneNumbers:
+          type: array
+          items:
+            type: string
+            example: +36201234123
+        thirdParty:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: google
+              userId:
+                type: string
+                example: rq238mrq2389rvq123213
+        loginMethods:
+          type: array
+          items:
+            type: object
+            properties:
+              recipeId:
+                type: string
+                enum: ['emailpassword', 'thirdparty', 'passwordless']
+              recipeUserId:
+                $ref: '#/components/schemas/userId'
+              verified:
+                type: boolean
+                example: true
+              tenantIds:
+                type: array
+                items:
+                  type: string
+                  example: public
+              timeJoined:
+                type: number
+                example: 1638433545183
+              email:
+                type: string
+                example: johndoe@gmail.com
+              phoneNumber:
+                type: string
+                example: +36201234123
+              thirdParty:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: google
+                  userId:
+                    type: string
+                    example: rq238mrq2389rvq123213
 
     email:
       type: string
@@ -2234,19 +2309,6 @@ components:
       description: An identifier that used to identify the login attempt/device.
       example: kFmkPQEAJtACiT2w/K8fndEuNm+XozJXSZSlWEr+iGs=
 
-    passwordlessUser:
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/userId'
-        email:
-          $ref: '#/components/schemas/email'
-        phoneNumber:
-          $ref: '#/components/schemas/phoneNumber'
-        timeJoined:
-          type: number
-          example: 1638433545183
-    
     thirdPartyId:
       type: string
       example: google
@@ -2325,24 +2387,44 @@ components:
         status:
           $ref: '#/components/schemas/statusOK'
     
+    passwordResetNotAllowedResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ['PASSWORD_RESET_NOT_ALLOWED']
+        reason:
+          type: string
+          example: "Token generation was not done because of account take over risk. Please contact support. (HAS_OTHER_EMAIL_OR_PHONE)"
+
     signinupResponse:
       type: object
       properties:
         status:
           $ref: '#/components/schemas/statusOK'
         user:
-          $ref: '#/components/schemas/thirdPartyUser'
-        createdNewUser:
+          $ref: '#/components/schemas/user'
+        createdNewRecipeUser:
           type: boolean
           example: true
+
+    passwordResetErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ['RESET_PASSWORD_INVALID_TOKEN_ERROR']
 
     passwordResetResponse:
       type: object
       properties:
         status:
           type: string
-          enum: ['OK', 'RESET_PASSWORD_INVALID_TOKEN_ERROR']
-        
+          enum: ['OK']
+        user:
+          $ref: '#/components/schemas/user'
+        email: 
+          $ref: '#/components/schemas/email'
     
     fieldErrorResponse:
       type: object
@@ -2369,12 +2451,22 @@ components:
           type: string
           enum: ['WRONG_CREDENTIALS_ERROR']
  
-    noEmailGivenByProviderResponse:
-      type: object
-      properties:
-        status: 
-          type: string
-          enum: ['NO_EMAIL_GIVEN_BY_PROVIDER']
+    signinupErrorResponse:
+      oneOf:
+        - type: object
+          properties:
+            status: 
+              type: string
+              enum: ['NO_EMAIL_GIVEN_BY_PROVIDER' | 'EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT']
+
+        - type: object
+          properties:
+            status: 
+              type: string
+              enum: ['SIGN_IN_UP_NOT_ALLOWED']
+            reason:
+              type: string
+              example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
 
     internalError:
       type: string

@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [1.18.0] - 2023-08-XX
+
+### Changed
+- Updates ThirdParty, ThirdPartyEmailPassword, ThirdPartyPasswordless, Passwordless and EmailPassword recipes to support account linking 
+  - Updates `{apiBasePath}/signinup/code`               POST
+  - Updates `{apiBasePath}/signinup/code/consume`       POST
+  - Updates `{apiBasePath}/signinup`                    POST
+  - Updates `{apiBasePath}/signin`                      POST
+  - Updates `{apiBasePath}/signup`                      POST
+  - Updates `{apiBasePath}/user/password/reset/token`   POST
+  - Updates `{apiBasePath}/user/password/reset`         POST
+- The changes to the above endpoints are:
+  - Added new response statuses
+  - Unified the type/shape of the user objects across all different responses 
+  - Renamed `createdNewUser` to `createdNewRecipeUser`
+
 ## [1.17.0] - 2023-07-21
 
 ### Added
