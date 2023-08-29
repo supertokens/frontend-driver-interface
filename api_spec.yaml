@@ -2457,7 +2457,7 @@ components:
           properties:
             status: 
               type: string
-              enum: ['NO_EMAIL_GIVEN_BY_PROVIDER' | 'EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT']
+              enum: ['NO_EMAIL_GIVEN_BY_PROVIDER', 'EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT']
 
         - type: object
           properties:
