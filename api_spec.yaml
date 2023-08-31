@@ -436,7 +436,7 @@ paths:
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
-                      url:
+                      urlWithQueryParams:
                         type: string
                         example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
                       pkceCodeVerifier:
@@ -1224,7 +1224,7 @@ paths:
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
-                      url:
+                      urlWithQueryParams:
                         type: string
                         example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
                       pkceCodeVerifier:
@@ -1715,7 +1715,7 @@ paths:
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
-                      url:
+                      urlWithQueryParams:
                         type: string
                         example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
                       pkceCodeVerifier:
