@@ -4,7 +4,7 @@ info:
   description: |
     These are the APIs exposed by our backend SDK. To be consumed by the frontend only.
     `<tenantId>` in all the APIs are optional. Its default value is `public`
-  version: "1.17.1"
+  version: "1.18.0"
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
