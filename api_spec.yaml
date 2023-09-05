@@ -2421,10 +2421,6 @@ components:
         status:
           type: string
           enum: ['OK']
-        user:
-          $ref: '#/components/schemas/user'
-        email: 
-          $ref: '#/components/schemas/email'
     
     fieldErrorResponse:
       type: object
