@@ -2459,7 +2459,7 @@ components:
           properties:
             status: 
               type: string
-              enum: ['SIGN_IN_UP_NOT_ALLOWED', 'EMAIL_ALREADY_USED_IN_ANOTHER_ACCOUNT']
+              enum: ['SIGN_IN_UP_NOT_ALLOWED']
             reason:
               type: string
               example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
