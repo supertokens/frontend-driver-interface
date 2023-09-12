@@ -945,6 +945,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/signInResponse'
+                  - $ref: '#/components/schemas/signInNotAllowedResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
                   - $ref: '#/components/schemas/wrongCredentialsResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
@@ -1006,6 +1007,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/signupResponse'
+                  - $ref: '#/components/schemas/signUpNotAllowedResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
@@ -1433,6 +1435,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/signInResponse'
+                  - $ref: '#/components/schemas/signInNotAllowedResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
                   - $ref: '#/components/schemas/wrongCredentialsResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
@@ -1494,6 +1497,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/signupResponse'
+                  - $ref: '#/components/schemas/signUpNotAllowedResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
@@ -2372,6 +2376,16 @@ components:
         user:
           $ref: '#/components/schemas/user'
     
+    signInNotAllowedResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ["SIGN_IN_NOT_ALLOWED"]
+        reason:
+          type: string
+          example: "Cannot sign in due to security reasons. Please try resetting your password, use a different login method or contact support. (ERR_CODE_008)"
+
     signupResponse:
       type: object
       properties:
@@ -2380,6 +2394,15 @@ components:
         user:
           $ref: '#/components/schemas/user'
           
+    signUpNotAllowedResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ["SIGN_UP_NOT_ALLOWED"]
+        reason:
+          type: string
+          example: "Cannot sign up due to security reasons. Please try resetting your password, use a different login method or contact support. (ERR_CODE_007)"
 
     passwordResetTokenResponse:
       type: object
