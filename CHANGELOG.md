@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Unified the type/shape of the user objects across all different responses 
   - Renamed `createdNewUser` to `createdNewRecipeUser`
 
+## [1.17.1] - 2023-08-31
+
+### Changed
+
+- Updated authorisationurl GET response to match implementation (and plans)
+
 ## [1.17.0] - 2023-07-21
 
 ### Added
