@@ -2202,8 +2202,12 @@ components:
             userId:
               type: string
               example: rq238mrq2389rvq123213
-            
-        
+        tenantIds:
+          type: array
+          items:
+            type: string
+            example: public
+
     user:
       type: object
       properties:
@@ -2215,6 +2219,11 @@ components:
         timeJoined:
           type: number
           example: 1638433545183
+        tenantIds:
+          type: array
+          items:
+            type: string
+            example: public
 
     email:
       type: string
@@ -2246,6 +2255,11 @@ components:
         timeJoined:
           type: number
           example: 1638433545183
+        tenantIds:
+          type: array
+          items:
+            type: string
+            example: public
     
     thirdPartyId:
       type: string
