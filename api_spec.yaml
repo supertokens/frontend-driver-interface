@@ -1416,6 +1416,10 @@ paths:
                               enabled:
                                 type: boolean
                                 example: true
+                          firstFactors:
+                            type: array
+                            items:
+                              type: string
                   - $ref: '#/components/schemas/generalErrorResponse'
         '404':
           $ref: '#/components/responses/404'        
