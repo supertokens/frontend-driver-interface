@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added an endpoint to query information about MFA factors
-- Updated loginmethods response type to include a list of first factors
+- Updated loginmethods (`{apiBasePath}/loginmethods`) response type to include a list of first factors
 
 ## [1.18.0] - 2023-08-XX
 
