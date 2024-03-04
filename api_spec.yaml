@@ -146,6 +146,9 @@ paths:
                         example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
                   - $ref: '#/components/schemas/generalErrorResponse'
 
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
+        
         '404':
           $ref: '#/components/responses/404'
         
@@ -311,6 +314,9 @@ paths:
         
         '404':
           $ref: '#/components/responses/404'
+
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
         
         '500':
           $ref: '#/components/responses/500'
@@ -473,6 +479,9 @@ paths:
                   - $ref: '#/components/schemas/signinupErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
+        
         '404':
           $ref: '#/components/responses/404'
         
@@ -622,6 +631,9 @@ paths:
                         type: string
                         example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
                   - $ref: '#/components/schemas/generalErrorResponse'
+
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
 
         '404':
           $ref: '#/components/responses/404'
@@ -781,6 +793,9 @@ paths:
                         example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
                   
                   - $ref: '#/components/schemas/generalErrorResponse'
+
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1019,6 +1034,9 @@ paths:
                   - $ref: '#/components/schemas/wrongCredentialsResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
+        
         '404':
           $ref: '#/components/responses/404'
         
@@ -1079,6 +1097,9 @@ paths:
                   - $ref: '#/components/schemas/signUpNotAllowedResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
+        
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1283,6 +1304,9 @@ paths:
                   - $ref: '#/components/schemas/signinupErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
+
         '404':
           $ref: '#/components/responses/404'
         
@@ -1513,6 +1537,9 @@ paths:
                   - $ref: '#/components/schemas/wrongCredentialsResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
+        
         '404':
           $ref: '#/components/responses/404'
         
@@ -1573,6 +1600,9 @@ paths:
                   - $ref: '#/components/schemas/signUpNotAllowedResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
+        
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1780,6 +1810,9 @@ paths:
                   - $ref: '#/components/schemas/signinupErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
+
         '404':
           $ref: '#/components/responses/404'
         
@@ -2267,6 +2300,49 @@ components:
         text/plain:
           schema:
             $ref: "#/components/schemas/notFound"
+    
+    403-factor-setup:
+      description: A claim validation error happened during factor setup
+      content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: invalid claim
+                      claimValidationErrors:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: st-ev
+                            reason:
+                              type: object
+                              example: 
+                                message: "wrong value"
+                                expectedValue: true
+                                actualValue: false
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: invalid claim
+                      claimValidationErrors:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: st-mfa
+                            reason:
+                              type: string
+                              example: "Completed factors in the session does not satisfy the MFA requirements for auth"
+        
     
   schemas:
     statusOK:
