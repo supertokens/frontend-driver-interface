@@ -23,7 +23,7 @@ paths:
     
     
   /{apiBasePath}/mfa/info:
-    get:
+    put:
       tags:
         - MultiFactorAuth Recipe
       operationId: getMFAInfo
@@ -70,14 +70,44 @@ paths:
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
-                      info:
+                      factors:
                         type: object
                         properties:
-                          isAlreadySetup:
+                          alreadySetup:
                             type: array
                             items:
                               type: string
-                          isAllowedToSetup:
+                          allowedToSetup:
+                            type: array
+                            items:
+                              type: string
+                          next:
+                            type: array
+                            items:
+                              type: string
+                      emails:
+                        type: object
+                        properties:
+                          emailpassword:
+                            type: array
+                            items:
+                              type: string
+                          otp-email:
+                            type: array
+                            items:
+                              type: string
+                          link-email:
+                            type: array
+                            items:
+                              type: string
+                      phoneNumbers:
+                        type: object
+                        properties:
+                          otp-phone:
+                            type: array
+                            items:
+                              type: string
+                          link-phone:
                             type: array
                             items:
                               type: string
@@ -1402,6 +1432,7 @@ paths:
                           - emailPassword
                           - thirdParty
                           - passwordless
+                          - firstFactors
                         properties:
                           emailPassword:
                             type: object
