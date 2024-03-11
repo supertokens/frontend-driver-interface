@@ -211,10 +211,10 @@ paths:
                         example: "asfd123"
                       qrCodeString:
                         type: string
-                        example: "asfd123"
+                        example: "otpauth://totp/Supertokens:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Supertokens"
                       secret:
                         type: string
-                        example: "asfd123"
+                        example: "JBSWY3DPEHPK3PXP"
                   - type: object
                     properties:
                       status:
