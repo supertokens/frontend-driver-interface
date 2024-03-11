@@ -434,11 +434,6 @@ paths:
                     properties:
                       status:
                         type: string
-                        enum: ['UNKNOWN_USER_ID_ERROR']
-                  - type: object
-                    properties:
-                      status:
-                        type: string
                         enum: ['INVALID_TOTP_ERROR']
                       currentNumberOfFailedAttempts:
                         type: number
