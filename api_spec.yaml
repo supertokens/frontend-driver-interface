@@ -4,7 +4,7 @@ info:
   description: |
     These are the APIs exposed by our backend SDK. To be consumed by the frontend only.
     `<tenantId>` in all the APIs are optional. Its default value is `public`
-  version: "1.18.0"
+  version: "1.19.0"
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
@@ -16,10 +16,447 @@ tags:
   - name: Passwordless Recipe
   - name: ThirdPartyPasswordless Recipe
   - name: EmailVerification Recipe
+  - name: MultiFactorAuth Recipe
+  - name: TOTP Recipe
   - name: JWT Recipe
   - name: OpenId Recipe
 paths:
     
+  /{apiBasePath}/mfa/info:
+    put:
+      tags:
+        - MultiFactorAuth Recipe
+      operationId: getMFAInfo
+      description: |
+        Returns information about the auth factors of the current user and refreshes the related session claim
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/multiFactorAuthRid'
+        - $ref: '#/components/parameters/anti-csrf'
+      security:
+        - AccessTokenBearer: []
+        - AccessTokenCookie: []
+
+      responses:
+        '200':
+          description: Information about the auth factors of the current user and optionally the session with a refreshed MFA claim
+          headers:
+            Set-Cookie:
+              description: Sent in cookie-based sessions if the access token payload is updated
+              schema:
+                type: string
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: Sent in cookie-based sessions if the access token payload is updated
+              schema:
+                $ref: '#/components/schemas/token'
+            anti-csrf:
+              description: Sent if enabled by the user
+              schema:
+                $ref: '#/components/schemas/token'
+            front-token:
+              description: Sent if the access token payload is updated
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                example: 'anti-csrf, front-token, st-access-token'
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      factors:
+                        type: object
+                        properties:
+                          alreadySetup:
+                            type: array
+                            items:
+                              type: string
+                          allowedToSetup:
+                            type: array
+                            items:
+                              type: string
+                          next:
+                            type: array
+                            items:
+                              type: string
+                      emails:
+                        type: object
+                        properties:
+                          emailpassword:
+                            type: array
+                            items:
+                              type: string
+                          otp-email:
+                            type: array
+                            items:
+                              type: string
+                          link-email:
+                            type: array
+                            items:
+                              type: string
+                      phoneNumbers:
+                        type: object
+                        properties:
+                          otp-phone:
+                            type: array
+                            items:
+                              type: string
+                          link-phone:
+                            type: array
+                            items:
+                              type: string
+                  - $ref: '#/components/schemas/generalErrorResponse'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+
+  /{apiBasePath}/totp/device/list:
+    get:
+      tags:
+        - TOTP Recipe
+      operationId: listTOTPdevices
+      description: |
+        List the TOTP devices of the current user
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/totpRid'
+        - $ref: '#/components/parameters/anti-csrf'
+      security:
+        - AccessTokenBearer: []
+        - AccessTokenCookie: []
+      responses:
+        '200':
+          description: The list of the TOTP devices of the session user
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      devices:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "asdf123"
+                            period:
+                              type: number
+                              example: 30
+                            skew:
+                              type: number
+                              example: 30
+                            verified:
+                              type: boolean
+                              example: false
+                  - $ref: '#/components/schemas/generalErrorResponse'
+
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500' 
+
+  /{apiBasePath}/totp/device:
+    post:
+      tags:
+        - TOTP Recipe
+      operationId: createTOTPDevice
+      description: |
+        Creates an unverified totp device
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/totpRid'
+        - $ref: '#/components/parameters/anti-csrf'
+      security:
+        - AccessTokenBearer: []
+        - AccessTokenCookie: []
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceName: 
+                  type: string
+                  example: "asdf123"
+      responses:
+        '200':
+          description: |
+            Information about the created (unverified) device. Based on the this,
+            the user can add the device to their TOTP app and verify it.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      deviceName:
+                        type: string
+                        example: "asfd123"
+                      qrCodeString:
+                        type: string
+                        example: "otpauth://totp/Supertokens:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Supertokens"
+                      secret:
+                        type: string
+                        example: "JBSWY3DPEHPK3PXP"
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['DEVICE_ALREADY_EXISTS_ERROR']
+                  - $ref: '#/components/schemas/generalErrorResponse'
+
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+
+  /{apiBasePath}/totp/device/remove:
+    post:
+      tags:
+        - TOTP Recipe
+      operationId: removeTOTPDevice
+      description: |
+        Removes a totp device
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/totpRid'
+        - $ref: '#/components/parameters/anti-csrf'
+      security:
+        - AccessTokenBearer: []
+        - AccessTokenCookie: []
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceName: 
+                  type: string
+                  example: "asdf123"
+      responses:
+        '200':
+          description: Success report
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      didDeviceExist:
+                        type: boolean
+                        example: true
+                  - $ref: '#/components/schemas/generalErrorResponse'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+
+  /{apiBasePath}/totp/device/verify:
+    post:
+      tags:
+        - TOTP Recipe
+      operationId: verifyTOTPDevice
+      description: |
+        Checks that the TOTP sent in the body belongs to the totp device (specified by deviceName, belonging to the session user)
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/totpRid'
+        - $ref: '#/components/parameters/anti-csrf'
+      security:
+        - AccessTokenBearer: []
+        - AccessTokenCookie: []
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                totp: 
+                  type: string
+                  example: "123456"
+                deviceName:
+                  type: string
+                  example: "asdf123asdf"
+
+      responses:
+        '200':
+          description: Verification result and optionally the session with a refreshed MFA claim
+          headers:
+            Set-Cookie:
+              description: Sent in cookie-based sessions if the access token payload is updated
+              schema:
+                type: string
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: Sent in cookie-based sessions if the access token payload is updated
+              schema:
+                $ref: '#/components/schemas/token'
+            anti-csrf:
+              description: Sent if enabled by the user
+              schema:
+                $ref: '#/components/schemas/token'
+            front-token:
+              description: Sent if the access token payload is updated
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                example: 'anti-csrf, front-token, st-access-token'
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['UNKNOWN_DEVICE_ERROR']
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['INVALID_TOTP_ERROR']
+                      currentNumberOfFailedAttempts:
+                        type: number
+                        example: 2
+                      maxNumberOfFailedAttempts:
+                        type: number
+                        example: 5
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['LIMIT_REACHED_ERROR']
+                      retryAfterMs:
+                        type: number
+                        example: 30000
+                  - $ref: '#/components/schemas/generalErrorResponse'
+
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
+
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+
+  /{apiBasePath}/totp/verify:
+    post:
+      tags:
+        - TOTP Recipe
+      operationId: verifyTOTP
+      description: |
+        Checks that the TOTP sent in the body belongs to a verified totp device of the session user
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/totpRid'
+        - $ref: '#/components/parameters/anti-csrf'
+      security:
+        - AccessTokenBearer: []
+        - AccessTokenCookie: []
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                totp: 
+                  type: string
+                  example: "123456"
+      responses:
+        '200':
+          description: Verification result and optionally the session with a refreshed MFA claim
+          headers:
+            Set-Cookie:
+              description: Sent in cookie-based sessions if the access token payload is updated
+              schema:
+                type: string
+                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax'
+            st-access-token:
+              description: Sent in cookie-based sessions if the access token payload is updated
+              schema:
+                $ref: '#/components/schemas/token'
+            anti-csrf:
+              description: Sent if enabled by the user
+              schema:
+                $ref: '#/components/schemas/token'
+            front-token:
+              description: Sent if the access token payload is updated
+              schema:
+                $ref: '#/components/schemas/token'
+            Access-Control-Expose-Headers:
+              schema:
+                type: string
+                example: 'anti-csrf, front-token, st-access-token'
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['INVALID_TOTP_ERROR']
+                      currentNumberOfFailedAttempts:
+                        type: number
+                        example: 2
+                      maxNumberOfFailedAttempts:
+                        type: number
+                        example: 5
+                  - type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: ['LIMIT_REACHED_ERROR']
+                      retryAfterMs:
+                        type: number
+                        example: 30000
+                  - $ref: '#/components/schemas/generalErrorResponse'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+
   /{apiBasePath}/<tenantId>/signinup/code⠀:
     post:
       tags:
@@ -77,6 +514,9 @@ paths:
                         example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
                   - $ref: '#/components/schemas/generalErrorResponse'
 
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
+        
         '404':
           $ref: '#/components/responses/404'
         
@@ -242,6 +682,9 @@ paths:
         
         '404':
           $ref: '#/components/responses/404'
+
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
         
         '500':
           $ref: '#/components/responses/500'
@@ -404,6 +847,9 @@ paths:
                   - $ref: '#/components/schemas/signinupErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
+        
         '404':
           $ref: '#/components/responses/404'
         
@@ -553,6 +999,9 @@ paths:
                         type: string
                         example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
                   - $ref: '#/components/schemas/generalErrorResponse'
+
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
 
         '404':
           $ref: '#/components/responses/404'
@@ -712,6 +1161,9 @@ paths:
                         example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
                   
                   - $ref: '#/components/schemas/generalErrorResponse'
+
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
         
         '404':
           $ref: '#/components/responses/404'
@@ -950,6 +1402,9 @@ paths:
                   - $ref: '#/components/schemas/wrongCredentialsResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
+        
         '404':
           $ref: '#/components/responses/404'
         
@@ -1010,6 +1465,9 @@ paths:
                   - $ref: '#/components/schemas/signUpNotAllowedResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
+        
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1214,6 +1672,9 @@ paths:
                   - $ref: '#/components/schemas/signinupErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
+
         '404':
           $ref: '#/components/responses/404'
         
@@ -1309,6 +1770,7 @@ paths:
                           - emailPassword
                           - thirdParty
                           - passwordless
+                          - firstFactors
                         properties:
                           emailPassword:
                             type: object
@@ -1347,6 +1809,10 @@ paths:
                               enabled:
                                 type: boolean
                                 example: true
+                          firstFactors:
+                            type: array
+                            items:
+                              type: string
                   - $ref: '#/components/schemas/generalErrorResponse'
         '404':
           $ref: '#/components/responses/404'        
@@ -1440,6 +1906,9 @@ paths:
                   - $ref: '#/components/schemas/wrongCredentialsResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
+        
         '404':
           $ref: '#/components/responses/404'
         
@@ -1500,6 +1969,9 @@ paths:
                   - $ref: '#/components/schemas/signUpNotAllowedResponse'
                   - $ref: '#/components/schemas/fieldErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
+        
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
         
         '404':
           $ref: '#/components/responses/404'
@@ -1707,6 +2179,9 @@ paths:
                   - $ref: '#/components/schemas/signinupErrorResponse'
                   - $ref: '#/components/schemas/generalErrorResponse'
         
+        '403':
+          $ref: '#/components/responses/403-factor-setup'
+
         '404':
           $ref: '#/components/responses/404'
         
@@ -2130,6 +2605,20 @@ components:
       example: multitenancy
       schema:
         type: string
+
+    multiFactorAuthRid:
+      name: rid
+      in: header
+      example: multifactorauth
+      schema:
+        type: string
+        
+    totpRid:
+      name: rid
+      in: header
+      example: totp
+      schema:
+        type: string
         
     anti-csrf:
       name: anti-csrf
@@ -2187,6 +2676,49 @@ components:
         text/plain:
           schema:
             $ref: "#/components/schemas/notFound"
+    
+    403-factor-setup:
+      description: A claim validation error happened during factor setup
+      content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: invalid claim
+                      claimValidationErrors:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: st-ev
+                            reason:
+                              type: object
+                              example: 
+                                message: "wrong value"
+                                expectedValue: true
+                                actualValue: false
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: invalid claim
+                      claimValidationErrors:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: st-mfa
+                            reason:
+                              type: string
+                              example: "Completed factors in the session does not satisfy the MFA requirements for auth"
+        
     
   schemas:
     statusOK:
