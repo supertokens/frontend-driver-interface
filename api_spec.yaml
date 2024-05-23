@@ -12,477 +12,12 @@ tags:
   - name: Session Recipe
   - name: EmailPassword Recipe
   - name: ThirdParty Recipe
-  - name: ThirdPartyEmailPassword Recipe
   - name: Passwordless Recipe
-  - name: ThirdPartyPasswordless Recipe
   - name: EmailVerification Recipe
   - name: JWT Recipe
   - name: OpenId Recipe
 paths:
     
-  /{apiBasePath}/<tenantId>/signinup/code⠀:
-    post:
-      tags:
-        - ThirdPartyPasswordless Recipe
-      operationId: thirdPartyPasswordlessSignInUpStart
-      description: |
-        Start sign in/up process with passwordless.
-        
-        Note: There is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
-      parameters:
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyPasswordlessRid'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - type: object
-                  properties:
-                    email: 
-                      $ref: '#/components/schemas/email'
-                  required:
-                    - email
-                - type: object
-                  properties:
-                    phoneNumber:
-                      $ref: '#/components/schemas/phoneNumber'
-                  required:
-                    - phoneNumber
-                - $ref: '#/components/schemas/generalErrorResponse'
-      responses:
-        '200':
-          description: Started the passwordless sign in/up process.
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    properties:
-                      status:
-                        $ref: '#/components/schemas/statusOK'
-                      deviceId:
-                        $ref: '#/components/schemas/deviceId'
-                      preAuthSessionId:
-                        $ref: '#/components/schemas/preAuthSessionId'
-                      flowType:
-                        type: string
-                        enum: ['MAGIC_LINK', 'USER_INPUT_CODE_AND_MAGIC_LINK', 'USER_INPUT_CODE']
-                  - $ref: '#/components/schemas/generalErrorResponse'
-
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'
-  
-  /{apiBasePath}/<tenantId>/signinup/code/resend⠀:
-    post:
-      tags:
-        - ThirdPartyPasswordless Recipe
-      operationId: thirdPartyPasswordlessSignInUpResend
-      description: |
-        Resend passwordless code
-        
-        Note: There is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
-      parameters:
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyPasswordlessRid'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                deviceId:
-                  $ref: '#/components/schemas/deviceId'
-                preAuthSessionId:
-                  $ref: '#/components/schemas/preAuthSessionId'
-              required:
-                - deviceId
-                - preAuthSessionId
-
-      responses:
-        '200':
-          description: Started the passwordless sign in/up process.
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    properties:
-                      status:
-                        type: string
-                        enum: ['OK', 'RESTART_FLOW_ERROR']
-                  - $ref: '#/components/schemas/generalErrorResponse'
-
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'
-
-  /{apiBasePath}/<tenantId>/signinup/code/consume⠀:
-    post:
-      tags:
-        - ThirdPartyPasswordless Recipe
-      operationId: thirdPartyPasswordlessSignInUpConsume
-      description: |
-        Finish sign in/up process with passwordless
-        
-        Note: There is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
-      parameters:
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyPasswordlessRid'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - type: object
-                  properties:
-                    preAuthSessionId:
-                      $ref: '#/components/schemas/preAuthSessionId'
-                    linkCode:
-                      type: string
-                      example: b10lbT_SnDC4flA6Fn7pE5TtG5k5NfigLef4QMBeGA8
-                  required:
-                    - preAuthSessionId
-                    - linkCode
-
-                - type: object
-                  properties:
-                    preAuthSessionId:
-                      $ref: '#/components/schemas/preAuthSessionId'
-                    deviceId:
-                      $ref: '#/components/schemas/deviceId'
-                    userInputCode:
-                      type: string
-                      example: 432123
-                  required:
-                    - preAuthSessionId
-                    - deviceId
-                    - userInputCode
-      responses:
-        '200':
-          description: Signin/up a user
-          headers:
-            Set-Cookie:
-              description: In cookie-based sessions
-              schema:
-                type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            st-access-token:
-              description: In header-based sessions
-              schema:
-                $ref: '#/components/schemas/token'
-            st-refresh-token:
-              description: In header-based sessions
-              schema:
-                $ref: '#/components/schemas/token'
-            anti-csrf:
-              description: If enabled by the user
-              schema:
-                $ref: '#/components/schemas/token'
-            front-token:
-              schema:
-                $ref: '#/components/schemas/token'
-            Access-Control-Expose-Headers:
-              schema:
-                type: string
-                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    properties:
-                      status:
-                        $ref: '#/components/schemas/statusOK'
-                      createdNewUser:
-                        type: boolean
-                        example: true
-                      user:
-                        $ref: '#/components/schemas/passwordlessUser'
-
-                  - type: object
-                    properties:
-                      status:
-                        type: string
-                        enum: ['INCORRECT_USER_INPUT_CODE_ERROR', 'EXPIRED_USER_INPUT_CODE_ERROR']
-                      
-                      failedCodeInputAttemptCount:
-                        type: number
-                        example: 2
-                      maximumCodeInputAttempts:
-                        type: number
-                        example: 5
-                  - type: object
-                    properties:
-                      status:
-                        type: string
-                        enum: ['RESTART_FLOW_ERROR']
-                  
-                  - $ref: '#/components/schemas/generalErrorResponse'
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'
-  
-  /{apiBasePath}/<tenantId>/signup/email/exists⠀⠀⠀:
-    get:
-      tags:
-        - ThirdPartyPasswordless Recipe
-      operationId: thirdPartyPasswordlessEmailExists
-      description: |
-        Check if an email exists
-        
-        Note: There is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
-      parameters:
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyPasswordlessRid'
-        - $ref: '#/components/parameters/email'
-      responses:
-        '200':
-          description: Checks if an email exists
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    properties:
-                      status:
-                        $ref: '#/components/schemas/statusOK'
-                      exists:
-                        $ref: '#/components/schemas/exists'
-                  - $ref: '#/components/schemas/generalErrorResponse'
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'
-  
-  /{apiBasePath}/<tenantId>/signup/phonenumber/exists⠀:
-    get:
-      tags:
-        - ThirdPartyPasswordless Recipe
-      operationId: thirdPartyPasswordlessPhoneNumberExists
-      description: |
-        Check if a phone number exists
-        
-        Note: There is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
-      parameters:
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyPasswordlessRid'
-        - $ref: '#/components/parameters/phoneNumber'
-      responses:
-        '200':
-          description: Checks if an email exists
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    properties:
-                      status:
-                        $ref: '#/components/schemas/statusOK'
-                      exists:
-                        $ref: '#/components/schemas/exists'
-                  - $ref: '#/components/schemas/generalErrorResponse'
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'
-  
-  /{apiBasePath}/<tenantId>/signinup⠀⠀:
-    post:
-      tags:
-        - ThirdPartyPasswordless Recipe
-      operationId: thirdPartyPasswordlessSignInUp
-      description: |
-        Signin/up a user using a Social Provider
-
-        Note: There is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
-      parameters:
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyPasswordlessRid'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - type: object
-                  required:
-                    - thirdPartyId
-                    - redirectURIInfo
-                  properties:
-                    thirdPartyId:
-                      $ref: '#/components/schemas/thirdPartyId'
-                    clientType:
-                      $ref: '#/components/schemas/clientType'
-                    redirectURIInfo:
-                      type: object
-                      required:
-                        - redirectURIOnProviderDashboard
-                        - redirectURIQueryParams
-                      properties:
-                        redirectURIOnProviderDashboard:
-                          $ref: '#/components/schemas/redirectURI'
-                        redirectURIQueryParams:
-                          type: object
-                          example:
-                            code: "neqmpdsfuqe141m5lk437867masdf"
-                            state: "ljayfgqewertbh13245njw0"
-                        pkceCodeVerifier:
-                          type: string
-                          example: abcd1234
-                - type: object
-                  required:
-                    - thirdPartyId
-                    - oAuthTokens
-                  properties:
-                    thirdPartyId:
-                      $ref: '#/components/schemas/thirdPartyId'
-                    clientType:
-                      $ref: '#/components/schemas/clientType'
-                    oAuthTokens:
-                      $ref: '#/components/schemas/oAuthTokens'
-
-      responses:
-        '200':
-          description: Signin/up a user
-          headers:
-            Set-Cookie:
-              description: In cookie-based sessions
-              schema:
-                type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            st-access-token:
-              description: In header-based sessions
-              schema:
-                $ref: '#/components/schemas/token'
-            st-refresh-token:
-              description: In header-based sessions
-              schema:
-                $ref: '#/components/schemas/token'
-            anti-csrf:
-              description: If enabled by the user
-              schema:
-                $ref: '#/components/schemas/token'
-            front-token:
-              schema:
-                $ref: '#/components/schemas/token'
-            Access-Control-Expose-Headers:
-              schema:
-                type: string
-                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/signinupResponse'
-                  - $ref: '#/components/schemas/noEmailGivenByProviderResponse'
-                  - $ref: '#/components/schemas/generalErrorResponse'
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'
-  
-  /{apiBasePath}/<tenantId>/authorisationurl⠀⠀:
-    get:
-      tags:
-        - ThirdPartyPasswordless Recipe
-      operationId: thirdPartyPasswordlessAuthorisationUrl
-      description: |
-        Get the thirdparty provider's authorisation URL to which the user should be redirected to.
-
-        Note: There is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
-      parameters:
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyPasswordlessRid'
-        - in: query
-          name: thirdPartyId
-          required: true
-          schema:
-            $ref: '#/components/schemas/thirdPartyId'
-        - in: query
-          name: redirectURIOnProviderDashboard
-          required: true
-          schema:
-            $ref: '#/components/schemas/redirectURI'
-        - in: query
-          name: clientType
-          required: false
-          schema:
-            $ref: '#/components/schemas/clientType'
-      responses:
-        '200':
-          description: Get the OAuth authorisation URL
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    required:
-                      - status
-                      - url
-                    properties:
-                      status:
-                        $ref: '#/components/schemas/statusOK'
-                      urlWithQueryParams:
-                        type: string
-                        example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
-                      pkceCodeVerifier:
-                        type: string
-                        example: abcd1234
-                  - $ref: '#/components/schemas/generalErrorResponse'
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'
-  
-  /{apiBasePath}/callback/apple⠀⠀:
-    post:
-      tags:
-        - ThirdPartyPasswordless Recipe
-      operationId: thirdPartyPasswordlessCallbackApple
-      description: |
-        Handles sign in with the apple.
-        
-        Note: There is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
-      parameters: 
-        - $ref: '#/components/parameters/apiBasePath'
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                code:
-                  type: string
-                  description: "The Authorization code which will be exchanged for an access token"
-                state:
-                  type: string
-                  description: "A unique string used to mitigate CSRF attacks"
-      responses:
-        '303':
-          description: Redirects the user to the client's app.
-          
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'
-  
   /{apiBasePath}/<tenantId>/signinup/code:
     post:
       tags:
@@ -690,9 +225,10 @@ paths:
 
   /{apiBasePath}/<tenantId>/signup/email/exists⠀⠀:
     get:
+      deprecated: true
       tags:
         - Passwordless Recipe
-      operationId: passwordlessEmailExists
+      operationId: passwordlessEmailExistsDepr
       description: |
         Check if an email exists
         Note that there is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
@@ -721,20 +257,85 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
 
-  /{apiBasePath}/<tenantId>/signup/phonenumber/exists:
+  /{apiBasePath}/<tenantId>/passwordless/email/exists:
     get:
       tags:
         - Passwordless Recipe
-      operationId: passwordlessPhoneNumberExists
+      operationId: passwordlessEmailExists
       description: |
         Check if an email exists
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/passwordlessRid'
+        - $ref: '#/components/parameters/email'
+      responses:
+        '200':
+          description: Checks if an email exists
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      exists:
+                        $ref: '#/components/schemas/exists'
+                  - $ref: '#/components/schemas/generalErrorResponse'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500' 
+
+  /{apiBasePath}/<tenantId>/signup/phonenumber/exists:
+    get:
+      deprecated: true
+      tags:
+        - Passwordless Recipe
+      operationId: passwordlessPhoneNumberExistsDepr
+      description: |
+        Check if a phone number exists
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
         - $ref: '#/components/parameters/passwordlessRid'
         - $ref: '#/components/parameters/phoneNumber'
       responses:
         '200':
-          description: Checks if an email exists
+          description: Checks if a phone number exists
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      exists:
+                        $ref: '#/components/schemas/exists'
+                  - $ref: '#/components/schemas/generalErrorResponse'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500' 
+
+  /{apiBasePath}/<tenantId>/passwordless/phonenumber/exists:
+    get:
+      tags:
+        - Passwordless Recipe
+      operationId: passwordlessPhoneNumberExists
+      description: |
+        Check if a phone number exists
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/passwordlessRid'
+        - $ref: '#/components/parameters/phoneNumber'
+      responses:
+        '200':
+          description: Checks if a phone number exists
           content:
             application/json:
               schema:
@@ -985,6 +586,39 @@ paths:
           $ref: '#/components/responses/500' 
   
   /{apiBasePath}/<tenantId>/signup/email/exists:
+    get:
+      deprecated: true
+      tags:
+        - EmailPassword Recipe
+      operationId: emailExists
+      description: |
+        Check if an email exists
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/emailPasswordRid'
+        - $ref: '#/components/parameters/email'
+      responses:
+        '200':
+          description: Checks if an email exists
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      exists:
+                        $ref: '#/components/schemas/exists'
+                  - $ref: '#/components/schemas/generalErrorResponse'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500' 
+        
+  /{apiBasePath}/<tenantId>/emailpassword/email/exists:
     get:
       tags:
         - EmailPassword Recipe
@@ -1348,418 +982,7 @@ paths:
         
         '500':
           $ref: '#/components/responses/500'
-  
-  /{apiBasePath}/<tenantId>/signin⠀:
-    post:
-      tags:
-        - ThirdPartyEmailPassword Recipe
-      operationId: thirdPartyEmailPasswordsignIn
-      description: |
-        Signin a user with email ID and password
-      parameters: 
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                formFields:
-                  $ref: '#/components/schemas/formFields'
-      responses:
-        '200':
-          description: Sign in Response
-          headers:
-            Set-Cookie:
-              description: In cookie-based sessions
-              schema:
-                type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            st-access-token:
-              description: In header-based sessions
-              schema:
-                $ref: '#/components/schemas/token'
-            st-refresh-token:
-              description: In header-based sessions
-              schema:
-                $ref: '#/components/schemas/token'
-            anti-csrf:
-              description: If enabled by the user
-              schema:
-                $ref: '#/components/schemas/token'
-            front-token:
-              schema:
-                $ref: '#/components/schemas/token'
-            Access-Control-Expose-Headers:
-              schema:
-                type: string
-                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/signInResponse'
-                  - $ref: '#/components/schemas/fieldErrorResponse'
-                  - $ref: '#/components/schemas/wrongCredentialsResponse'
-                  - $ref: '#/components/schemas/generalErrorResponse'
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/signup⠀:
-    post:
-      tags:
-        - ThirdPartyEmailPassword Recipe
-      operationId: thirdPartyEmailPasswordsignUp
-      description: |
-        Signup a user with email ID and password
-      parameters: 
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                formFields:
-                  $ref: '#/components/schemas/formFields'
-      responses:
-        '200':
-          description: Sign up Response
-          headers:
-            Set-Cookie:
-              description: In cookie-based sessions
-              schema:
-                type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            st-access-token:
-              description: In header-based sessions
-              schema:
-                $ref: '#/components/schemas/token'
-            st-refresh-token:
-              description: In header-based sessions
-              schema:
-                $ref: '#/components/schemas/token'
-            anti-csrf:
-              description: If enabled by the user
-              schema:
-                $ref: '#/components/schemas/token'
-            front-token:
-              schema:
-                $ref: '#/components/schemas/token'
-            Access-Control-Expose-Headers:
-              schema:
-                type: string
-                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/signupResponse'
-                  - $ref: '#/components/schemas/fieldErrorResponse'
-                  - $ref: '#/components/schemas/generalErrorResponse'
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'
-  
-  
-  /{apiBasePath}/<tenantId>/signup/email/exists⠀:
-    get:
-      tags:
-        - ThirdPartyEmailPassword Recipe
-      operationId: thirdPartyEmailPasswordEmailExists
-      description: |
-        Check if an email exists
-      parameters:
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
-        - $ref: '#/components/parameters/email'
-      responses:
-        '200':
-          description: Checks if an email exists
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    properties:
-                      status:
-                        $ref: '#/components/schemas/statusOK'
-                      exists:
-                        $ref: '#/components/schemas/exists'
-                  - $ref: '#/components/schemas/generalErrorResponse'
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500' 
-        
-  /{apiBasePath}/<tenantId>/user/password/reset/token⠀:
-    post:
-      tags:
-        - ThirdPartyEmailPassword Recipe
-      operationId: thirdPartyEmailPasswordPasswordResetToken
-      description: |
-        Generate a new reset password token for this user
-      parameters:
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                formFields:
-                  $ref: '#/components/schemas/formFields'
-              example: { formFields: [ {id: 'email', value: 'test@email.com'}]}
-      responses:
-        '200':
-          description: Generate a new reset password token for this user
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/passwordResetTokenResponse'
-                  - $ref: '#/components/schemas/fieldErrorResponse'
-                  - $ref: '#/components/schemas/generalErrorResponse'
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'  
-  
-  /{apiBasePath}/<tenantId>/user/password/reset⠀:
-    post:
-      tags:
-        - ThirdPartyEmailPassword Recipe
-      operationId: thirdPartyEmailPasswordPasswordReset
-      description: |
-        Reset a password using password reset token
-      parameters:
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                method:
-                  $ref: '#/components/schemas/method'
-                formfields:
-                  $ref: '#/components/schemas/formFields'
-                token:
-                  $ref: '#/components/schemas/token'
-              example:  { method: "token", formFields: [{id: "password", value: "newPass123"} ], token: "ZTRiOTBjNz...jI5MTZlODkxw"}
-      responses:
-        '200':
-          description: Reset a password using password reset token
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/passwordResetResponse'
-                  - $ref: '#/components/schemas/fieldErrorResponse'
-                  - $ref: '#/components/schemas/generalErrorResponse'
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500' 
-  
-  /{apiBasePath}/<tenantId>/signinup⠀:
-    post:
-      tags:
-        - ThirdPartyEmailPassword Recipe
-      operationId: thirdPartyEmailPasswordSignInUp
-      description: |
-        Signin/up a user using a Social Provider
-
-        Note: There is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
-      parameters:
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - type: object
-                  required:
-                    - thirdPartyId
-                    - redirectURIInfo
-                  properties:
-                    thirdPartyId:
-                      $ref: '#/components/schemas/thirdPartyId'
-                    clientType:
-                      $ref: '#/components/schemas/clientType'
-                    redirectURIInfo:
-                      type: object
-                      required:
-                        - redirectURIOnProviderDashboard
-                        - redirectURIQueryParams
-                      properties:
-                        redirectURIOnProviderDashboard:
-                          $ref: '#/components/schemas/redirectURI'
-                        redirectURIQueryParams:
-                          type: object
-                          example:
-                            code: "neqmpdsfuqe141m5lk437867masdf"
-                            state: "ljayfgqewertbh13245njw0"
-                        pkceCodeVerifier:
-                          type: string
-                          example: abcd1234
-                - type: object
-                  required:
-                    - thirdPartyId
-                    - oAuthTokens
-                  properties:
-                    thirdPartyId:
-                      $ref: '#/components/schemas/thirdPartyId'
-                    clientType:
-                      $ref: '#/components/schemas/clientType'
-                    oAuthTokens:
-                      $ref: '#/components/schemas/oAuthTokens'
-      responses:
-        '200':
-          description: Signin/up a user
-          headers:
-            Set-Cookie:
-              description: In cookie-based sessions
-              schema:
-                type: string
-                example: 'sAccessToken=eyJhb...%3D%3D; Path=/; Expires=Tue, 22 Jun 2021 07:43:07 GMT; HttpOnly; SameSite=Lax; sRefreshToken=K91cQ7ezMbu...cb61c3.V2; Path=/auth/session/refresh; Expires=Thu, 30 Sep 2021 06:43:07 GMT; HttpOnly; SameSite=Lax'
-            st-access-token:
-              description: In header-based sessions
-              schema:
-                $ref: '#/components/schemas/token'
-            st-refresh-token:
-              description: In header-based sessions
-              schema:
-                $ref: '#/components/schemas/token'
-            anti-csrf:
-              description: If enabled by the user
-              schema:
-                $ref: '#/components/schemas/token'
-            front-token:
-              schema:
-                $ref: '#/components/schemas/token'
-            Access-Control-Expose-Headers:
-              schema:
-                type: string
-                example: 'anti-csrf, front-token, st-access-token, st-refresh-token'
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/signinupResponse'
-                  - $ref: '#/components/schemas/noEmailGivenByProviderResponse'
-                  - $ref: '#/components/schemas/generalErrorResponse'
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500' 
-  
-  /{apiBasePath}/<tenantId>/authorisationurl⠀:
-    get:
-      tags:
-        - ThirdPartyEmailPassword Recipe
-      operationId: thirdPartyEmailPasswordAuthorisationUrl
-      description: |
-        Get the thirdparty provider's authorisation URL to which the user should be redirected to.
-
-        Note: There is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
-      parameters:
-        - $ref: '#/components/parameters/apiBasePath'
-        - $ref: '#/components/parameters/thirdPartyEmailPasswordRid'
-        - in: query
-          name: thirdPartyId
-          required: true
-          schema:
-            $ref: '#/components/schemas/thirdPartyId'
-        - in: query
-          name: redirectURIOnProviderDashboard
-          required: true
-          schema:
-            $ref: '#/components/schemas/redirectURI'
-        - in: query
-          name: clientType
-          required: false
-          schema:
-            $ref: '#/components/schemas/clientType'
-      responses:
-        '200':
-          description: Get the OAuth authorisation URL
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - type: object
-                    required:
-                      - status
-                      - url
-                    properties:
-                      status:
-                        $ref: '#/components/schemas/statusOK'
-                      urlWithQueryParams:
-                        type: string
-                        example: https://providerdomain.com/authorize?client_id=..&scope=..&access_type=..
-                      pkceCodeVerifier:
-                        type: string
-                        example: abcd1234
-                  - $ref: '#/components/schemas/generalErrorResponse'
-        
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'
-  
-  /{apiBasePath}/callback/apple⠀:
-    post:
-      tags:
-        - ThirdPartyEmailPassword Recipe
-      operationId: thirdPartyEmailPasswordCallbackApple
-      description: |
-        Handles sign in with the apple.
-      parameters: 
-        - $ref: '#/components/parameters/apiBasePath'
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                code:
-                  type: string
-                  description: "The Authorization code which will be exchanged for an access token"
-                state:
-                  type: string
-                  description: "A unique string used to mitigate CSRF attacks"
-      responses:
-        '303':
-          description: Redirects the user to the client's app.
-          
-        '404':
-          $ref: '#/components/responses/404'
-        
-        '500':
-          $ref: '#/components/responses/500'
-  
   /{apiBasePath}/<tenantId>/user/email/verify/token:
     post:
       tags:
@@ -2056,25 +1279,11 @@ components:
       example: thirdparty
       schema:
         type: string
-    
-    thirdPartyEmailPasswordRid:
-      name: rid
-      in: header
-      example: thirdpartyemailpassword
-      schema:
-        type: string
 
     passwordlessRid:
       name: rid
       in: header
       example: passwordless
-      schema:
-        type: string
-    
-    thirdPartyPasswordlessRid:
-      name: rid
-      in: header
-      example: thirdpartypasswordless
       schema:
         type: string
 
