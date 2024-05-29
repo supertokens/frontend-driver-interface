@@ -590,7 +590,7 @@ paths:
       deprecated: true
       tags:
         - EmailPassword Recipe
-      operationId: emailExists
+      operationId: emailExistsDepr
       description: |
         Check if an email exists
       parameters:
