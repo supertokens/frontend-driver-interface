@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [3.0.0] - 2024-05-24
+
+### Changes
+
+- Removed all ThirdPartyEmailPassword and ThirdPartyPasswordless APIs
+  - This doesn't result in any removed paths as the same paths exists in the individual recipes, only the rid param is different
+- Marked as deprecated:
+  - `GET /{apiBasePath}/<tenantId>/signup/phoneNumber/exists`
+  - `GET /{apiBasePath}/<tenantId>/signup/email/exists`
+- Added:
+  - `GET /{apiBasePath}/<tenantId>/passwordless/phoneNumber/exists`
+  - `GET /{apiBasePath}/<tenantId>/passwordless/email/exists`
+  - `GET /{apiBasePath}/<tenantId>/emailpassword/email/exists`
+  - All of the above are moved/renamed version of the APIs marked as deprecated above
+
 ## [1.19.0] - 2023-10-XX
 
 ### Added
