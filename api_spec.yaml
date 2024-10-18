@@ -4,7 +4,7 @@ info:
   description: |
     These are the APIs exposed by our backend SDK. To be consumed by the frontend only.
     `<tenantId>` in all the APIs are optional. Its default value is `public`
-  version: "3.1.0"
+  version: "4.0.0"
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
@@ -18,6 +18,7 @@ tags:
   - name: TOTP Recipe
   - name: JWT Recipe
   - name: OpenId Recipe
+  - name: OAuth2Provider Recipe
 paths:
     
   /{apiBasePath}/mfa/info:
@@ -1704,6 +1705,45 @@ paths:
                         type: string
                         description: URL for fetching a list JsonWebKey, used for JWT signature verification. Refer to /jwt/jwks.json API in the JWT recipe for JWK details
                         example: https://api.example.com/auth/jwt/jwks.json
+                      authorization_endpoint:
+                        type: string
+                        description: URL of the authorization endpoint
+                        example: https://api.example.com/auth/oauth/authorize
+                      token_endpoint:
+                        type: string
+                        description: URL of the token endpoint
+                        example: https://api.example.com/auth/oauth/token
+                      userinfo_endpoint:
+                        type: string
+                        description: URL of the userinfo endpoint
+                        example: https://api.example.com/auth/oauth/userinfo
+                      revocation_endpoint:
+                        type: string
+                        description: URL of the token revocation endpoint
+                        example: https://api.example.com/auth/oauth/revoke
+                      token_introspection_endpoint:
+                        type: string
+                        description: URL of the token introspection endpoint
+                        example: https://api.example.com/auth/oauth/introspect
+                      end_session_endpoint:
+                        type: string
+                        description: URL of the end session endpoint
+                        example: https://api.example.com/auth/oauth/end_session
+                      subject_types_supported: 
+                        type: array
+                        items:
+                          type: string
+                          enum: ["public"]
+                      id_token_signing_alg_values_supported: 
+                        type: array
+                        items:
+                          type: string
+                          enum: ["RS256"]
+                      response_types_supported: 
+                        type: array
+                        items:
+                          type: string
+                          enum: ["code", "id_token", "id_token token"]
                   - $ref: '#/components/schemas/generalErrorResponse'
 
         '400':
@@ -1714,6 +1754,484 @@ paths:
         
         '500':
           $ref: '#/components/responses/500'  
+
+  /{apiBasePath}/oauth/login:
+    get:
+      tags:
+        - OAuth2Provider Recipe
+      operationId: oauthLoginGET
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      description: |
+        Continues the OAuth2 login flow after the login page
+      responses:
+        '200':
+          description: The next url in the login flow
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      frontendRedirectTo:
+                        type: string
+                        description: The URL to redirect the user to
+                        example: https://client.com/callback?code=asdf1234567890&status=asdf1234
+                  - $ref: '#/components/schemas/generalErrorResponse'
+
+        '400':
+          $ref: '#/components/responses/400-oauth-error'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+
+
+  /{apiBasePath}/oauth/auth:
+    get:
+      tags:
+        - OAuth2Provider Recipe
+      operationId: oauthAuthGET
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      description: |
+        Starts the OAuth2 login flow
+      responses:
+        '302':
+          description: Redirects the user to the login page or back to the client app
+          headers:
+            Location:
+              schema:
+                type: string
+                example: https://auth.example.com/auth/?loginChallenge=1234567890
+
+        '200':
+          description: A general error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/generalErrorResponse'
+
+        '400':
+          $ref: '#/components/responses/400-oauth-error'
+
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+
+  /{apiBasePath}/oauth/token:
+    post:
+      tags:
+        - OAuth2Provider Recipe
+      operationId: oauthTokenPOST
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      description: |
+        Exchanges an OAuth2 grant (e.g.: authorization code) for an access token (and optionally a refresh/id token)
+      responses:
+        '200':
+          description: Issued tokens
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required:
+                      - expires_in
+                      - token_type
+                      - scope
+                    properties:
+                      access_token:
+                        type: string
+                        desciption: 'The access token issued by the authorization server.'
+                      
+                      expires_in:
+                        type: number
+                        desciption: 'The lifetime in seconds of the access token (integer). For example, the value "3600" denotes that the access token will expire in one hour from the time the response was generated.'
+                      
+                      id_token:
+                        type: string
+                        desciption: 'To retrieve a refresh token request the id_token scope.'
+                      
+                      refresh_token:
+                        type: string
+                        desciption: 'The refresh token, which can be used to obtain new access tokens. To retrieve it add the scope "offline" to your access token request.'
+                      
+                      scope:
+                        type: string
+                        desciption: 'The scope of the access token'
+                      
+                      token_type:
+                        type: string
+                        desciption: 'The type of the token issued'
+                  - $ref: '#/components/schemas/generalErrorResponse'
+
+        '400':
+          $ref: '#/components/responses/400-oauth-error'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+
+  /{apiBasePath}/oauth/userinfo:
+    get:
+      tags:
+        - OAuth2Provider Recipe
+      operationId: oauthUserInfoGET
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      description: |
+        Retrieves user information based on the access token passed to it
+      responses:
+        '200':
+          description: Retrieved user information
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required:
+                      - sub
+                    properties:
+                      sub:
+                        $ref: '#/components/schemas/userId'
+                      email:
+                        type: string
+                        description: The email of the user
+                        example: johndoe@gmail.com
+                      email_verified:
+                        type: boolean
+                        description: Whether the email is verified
+                        example: true
+                      emails:
+                        type: array
+                        items:
+                          type: string
+                          example: johndoe@gmail.com
+                      phoneNumber:
+                        type: string
+                        description: The phoneNumber of the user
+                        example: '0036701234567'
+                      phoneNumber_verified:
+                        type: boolean
+                        description: Whether the phoneNumber is verified
+                        example: true
+                      phoneNumbers:
+                        type: array
+                        items:
+                          type: string
+                          example: '0036701234567'
+                      roles:
+                        type: array
+                        items:
+                          type: string
+                          example: admin
+                      permissions:
+                        type: array
+                        items:
+                          type: string
+                          example: 'user:create'
+
+                  - $ref: '#/components/schemas/generalErrorResponse'
+
+        '401':
+          description: The access token is expired, revoked or malformed
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+                example: 'Bearer error="invalid_token"'
+          content:
+            application/json:
+              schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: Invalid or expired OAuth2 access token
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+
+  /{apiBasePath}/oauth/revoke:
+    post:
+      tags:
+        - OAuth2Provider Recipe
+      operationId: oauthRevokePOST
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      description: |
+        Revokes an access/refresh token
+      responses:
+        '200':
+          description: Revoked the access/refresh token
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required:
+                      - status
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                    
+                  - $ref: '#/components/schemas/generalErrorResponse'
+
+        '400':
+          $ref: '#/components/responses/400-oauth-error'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+        
+  /{apiBasePath}/oauth/introspect:
+    post:
+      tags:
+        - OAuth2Provider Recipe
+      operationId: oauthIntrospectPOST
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      description: |
+        Introspects an access/refresh token
+      responses:
+        '200':
+          description: Information about the token
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required:
+                      - active
+                    properties:
+                      active:
+                        type: boolean
+                        description: Whether the token is active or not
+                        example: true
+                      token_type:
+                        type: string
+                        description: The type of the token
+                        example: Bearer
+                      token_use:
+                        type: string
+                        description: The use of the token
+                        example: access_token
+                      sub:
+                        $ref: '#/components/schemas/userId'
+                      email:
+                        type: string
+                        description: The email of the user
+                        example: johndoe@gmail.com
+                      email_verified:
+                        type: boolean
+                        description: Whether the email is verified
+                        example: true
+                      emails:
+                        type: array
+                        items:
+                          type: string
+                          example: johndoe@gmail.com
+                      phoneNumber:
+                        type: string
+                        description: The phoneNumber of the user
+                        example: '0036701234567'
+                      phoneNumber_verified:
+                        type: boolean
+                        description: Whether the phoneNumber is verified
+                        example: true
+                      phoneNumbers:
+                        type: array
+                        items:
+                          type: string
+                          example: '0036701234567'
+                      roles:
+                        type: array
+                        items:
+                          type: string
+                          example: admin
+                      permissions:
+                        type: array
+                        items:
+                          type: string
+                          example: 'user:create'
+                    
+                  - $ref: '#/components/schemas/generalErrorResponse'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+        
+  /{apiBasePath}/oauth/end_session:
+    post:
+      tags:
+        - OAuth2Provider Recipe
+      operationId: oauthEndSessionPOST
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      description: |
+        Redirects the user to a page where they can log out and revoke the oauth tokens
+      responses:
+        '302':
+          description: Redirects the user to the logout page or back to the client app
+          headers:
+            Location:
+              schema:
+                type: string
+                example: https://auth.example.com/auth/oauth/logout?logoutChallenge=1234567890
+
+        '200':
+          description: A general error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/generalErrorResponse'
+
+        '400':
+          $ref: '#/components/responses/400-oauth-error'
+
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+    get:
+      tags:
+        - OAuth2Provider Recipe
+      operationId: oauthEndSessionGET
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      description: |
+        Redirects the user to a page where they can log out and revoke the oauth tokens
+      responses:
+        '302':
+          description: Redirects the user to the logout page or back to the client app
+          headers:
+            Location:
+              schema:
+                type: string
+                example: https://auth.example.com/auth/oauth/logout?logoutChallenge=1234567890
+
+        '200':
+          description: A general error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/generalErrorResponse'
+
+        '400':
+          $ref: '#/components/responses/400-oauth-error'
+
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+        
+  /{apiBasePath}/oauth/logininfo:
+    get:
+      tags:
+        - OAuth2Provider Recipe
+      operationId: oauthLoginInfoGET
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      description: |
+        Retrieves information about the OAuth2 login
+      responses:
+        '200':
+          description: Information about the current login flow
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required:
+                      - status
+                      - info
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/statusOK'
+                      info:
+                        type: object
+                        description: Information about the current login flow
+                        required:
+                          - clientId
+                        properties:
+                          clientId:
+                            type: string
+                            description: The ID of the client.
+                          clientName:
+                            type: string
+                            description: The name of the client.
+                          tosUri:
+                            type: string
+                            description: The URI of the client's terms of service.
+                          policyUri:
+                            type: string
+                            description: The URI of the client's privacy policy.
+                          logoUri:
+                            type: string
+                            description: The URI of the client's logo.
+                          clientUri:
+                            type: string
+                            description: The URI of the client we can link to on the login page
+                    
+                  - $ref: '#/components/schemas/generalErrorResponse'
+        
+        '400':
+          $ref: '#/components/responses/400-oauth-error'
+
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
+        
+  /{apiBasePath}/oauth/logout:
+    post:
+      tags:
+        - OAuth2Provider Recipe
+      operationId: oauthLogoutPOST
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+      description: |
+        Logs out the user and revokes the access/refresh tokens based on the id_token_hint passed to the end_session endpoint
+      responses:
+        '200':
+          description: Accepts the logout request specified by the challenge and gets where the user should be redirected to
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      frontendRedirectTo:
+                        type: string
+                        description: The URL to redirect the user to
+                        example: https://auth.example.com/auth/oauth/logout?logoutChallenge=1234567890
+                  - $ref: '#/components/schemas/generalErrorResponse'
+
+        '400':
+          $ref: '#/components/responses/400-oauth-error'
+        
+        '404':
+          $ref: '#/components/responses/404'
+        
+        '500':
+          $ref: '#/components/responses/500'
 
   /example:
     get:
@@ -1879,6 +2397,21 @@ components:
         text/plain:
           schema:
             $ref: "#/components/schemas/notFound"
+
+    400-oauth-error:
+      description: error code 400 for OAuth2 errors
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: invalid_request
+              error_description:
+                type: string
+                example: 'Unsupported grant type: password'
+    
     
     403-factor-setup:
       description: A claim validation error happened during factor setup
