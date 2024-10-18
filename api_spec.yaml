@@ -4,7 +4,7 @@ info:
   description: |
     These are the APIs exposed by our backend SDK. To be consumed by the frontend only.
     `<tenantId>` in all the APIs are optional. Its default value is `public`
-  version: "3.0.0"
+  version: "3.1.0"
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
@@ -474,12 +474,18 @@ paths:
                   properties:
                     email: 
                       $ref: '#/components/schemas/email'
+                    shouldTryLinkingWithSessionUser:
+                      type: boolean
+                      example: false
                   required:
                     - email
                 - type: object
                   properties:
                     phoneNumber:
                       $ref: '#/components/schemas/phoneNumber'
+                    shouldTryLinkingWithSessionUser:
+                      type: boolean
+                      example: false
                   required:
                     - phoneNumber
 
@@ -540,6 +546,9 @@ paths:
                   $ref: '#/components/schemas/deviceId'
                 preAuthSessionId:
                   $ref: '#/components/schemas/preAuthSessionId'
+                shouldTryLinkingWithSessionUser:
+                  type: boolean
+                  example: false
               required:
                 - deviceId
                 - preAuthSessionId
@@ -583,6 +592,9 @@ paths:
                   properties:
                     preAuthSessionId:
                       $ref: '#/components/schemas/preAuthSessionId'
+                    shouldTryLinkingWithSessionUser:
+                      type: boolean
+                      example: false
                     linkCode:
                       type: string
                       example: b10lbT_SnDC4flA6Fn7pE5TtG5k5NfigLef4QMBeGA8
@@ -594,6 +606,9 @@ paths:
                   properties:
                     preAuthSessionId:
                       $ref: '#/components/schemas/preAuthSessionId'
+                    shouldTryLinkingWithSessionUser:
+                      type: boolean
+                      example: false
                     deviceId:
                       $ref: '#/components/schemas/deviceId'
                     userInputCode:
@@ -938,9 +953,14 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - formFields
               properties:
                 formFields:
                   $ref: '#/components/schemas/formFields'
+                shouldTryLinkingWithSessionUser:
+                  type: boolean
+                  example: false
       responses:
         '200':
           description: Sign in Response
@@ -1003,9 +1023,14 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - formFields
               properties:
                 formFields:
                   $ref: '#/components/schemas/formFields'
+                shouldTryLinkingWithSessionUser:
+                  type: boolean
+                  example: false
       responses:
         '200':
           description: Sign up Response
@@ -1235,6 +1260,9 @@ paths:
                         pkceCodeVerifier:
                           type: string
                           example: abcd1234
+                    shouldTryLinkingWithSessionUser:
+                      type: boolean
+                      example: false
                 - type: object
                   required:
                     - thirdPartyId
@@ -1246,6 +1274,9 @@ paths:
                       $ref: '#/components/schemas/clientType'
                     oAuthTokens:
                       $ref: '#/components/schemas/oAuthTokens'
+                    shouldTryLinkingWithSessionUser:
+                      type: boolean
+                      example: false
       responses:
         '200':
           description: Signin/up a user
