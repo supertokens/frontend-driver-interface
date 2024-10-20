@@ -10,8 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - Updated the expected response types for the `GET /{apiBasePath}/.well-known/openid-configuration`
-- Added the `OAuth2Provider` recipe. Added APIs:
-  - `POST /{apiBasePath}/oauth2/provider`
+- Added the `OAuth2Provider` recipe. New APIs:
+  -   `GET /{apiBasePath}/oauth/login`
+  -   `GET /{apiBasePath}/oauth/auth`
+  -   `POST /{apiBasePath}/oauth/token`
+  -   `GET /{apiBasePath}/oauth/userinfo`
+  -   `POST /{apiBasePath}/oauth/revoke`
+  -   `POST /{apiBasePath}/oauth/introspect`
+  -   `POST /{apiBasePath}/oauth/end_session`
+  -   `GET /{apiBasePath}/oauth/end_session`
+  -   `GET /{apiBasePath}/oauth/logininfo`
+  -   `POST /{apiBasePath}/oauth/logout`
 
 
 ## [3.1.0] - 2024-10-18
