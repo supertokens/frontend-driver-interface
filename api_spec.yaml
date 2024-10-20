@@ -1762,6 +1762,11 @@ paths:
       operationId: oauthLoginGET
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
+        - in: query
+          name: loginChallenge
+          required: true
+          schema:
+            type: string
       description: |
         Continues the OAuth2 login flow after the login page
       responses:
@@ -1797,7 +1802,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
       description: |
-        Starts the OAuth2 login flow
+        Starts the OAuth2 login flow - for a detailed description of all input parameters please see the OAuth2 and OpenID Connect Core specs
       responses:
         '302':
           description: Redirects the user to the login page or back to the client app
@@ -1831,7 +1836,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
       description: |
-        Exchanges an OAuth2 grant (e.g.: authorization code) for an access token (and optionally a refresh/id token)
+        Exchanges an OAuth2 grant (e.g.: authorization code) for an access token (and optionally a refresh/id token) - for a detailed description of all input parameters please see the OAuth2 and OpenID Connect Core specs
       responses:
         '200':
           description: Issued tokens
@@ -1847,27 +1852,27 @@ paths:
                     properties:
                       access_token:
                         type: string
-                        desciption: 'The access token issued by the authorization server.'
+                        description: 'The access token issued by the authorization server.'
                       
                       expires_in:
                         type: number
-                        desciption: 'The lifetime in seconds of the access token (integer). For example, the value "3600" denotes that the access token will expire in one hour from the time the response was generated.'
+                        description: 'The lifetime in seconds of the access token (integer). For example, the value "3600" denotes that the access token will expire in one hour from the time the response was generated.'
                       
                       id_token:
                         type: string
-                        desciption: 'To retrieve a refresh token request the id_token scope.'
+                        description: 'To retrieve a refresh token request the id_token scope.'
                       
                       refresh_token:
                         type: string
-                        desciption: 'The refresh token, which can be used to obtain new access tokens. To retrieve it add the scope "offline" to your access token request.'
+                        description: 'The refresh token, which can be used to obtain new access tokens. To retrieve it add the scope "offline" to your access token request.'
                       
                       scope:
                         type: string
-                        desciption: 'The scope of the access token'
+                        description: 'The scope of the access token'
                       
                       token_type:
                         type: string
-                        desciption: 'The type of the token issued'
+                        description: 'The type of the token issued'
                   - $ref: '#/components/schemas/generalErrorResponse'
 
         '400':
@@ -1886,6 +1891,8 @@ paths:
       operationId: oauthUserInfoGET
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
+      security:
+        - OAuth2AccessTokenBearer: []
       description: |
         Retrieves user information based on the access token passed to it
       responses:
@@ -1970,7 +1977,39 @@ paths:
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
       description: |
-        Revokes an access/refresh token
+        Revokes an access/refresh token - the client id and secret can also be provided in an authorization header using the Basic scheme
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  example: asdfasdfasfd
+                client_id:
+                  type: string
+                  example: st-cl-test-client
+                client_secret:
+                  type: string
+                  example: superSecret
+          x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  example: asdfasdfasfd
+                client_id:
+                  type: string
+                  example: st-cl-test-client
+                client_secret:
+                  type: string
+                  example: superSecret
       responses:
         '200':
           description: Revoked the access/refresh token
@@ -2005,6 +2044,26 @@ paths:
         - $ref: '#/components/parameters/apiBasePath'
       description: |
         Introspects an access/refresh token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  example: asdfasdfasfd
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  example: asdfasdfasfd
       responses:
         '200':
           description: Information about the token
@@ -2082,8 +2141,36 @@ paths:
       operationId: oauthEndSessionPOST
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_token_hint:
+                  type: string
+                  example: asdfasdfASDF
+                client_id:
+                  type: string
+                  example: st-cl-example-client
+                post_logout_redirect_uri:
+                  type: string
+                  example: https://client.example.com/logoutCallback
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id_token_hint:
+                  type: string
+                  example: asdfasdfASDF
+                client_id:
+                  type: string
+                  example: st-cl-example-client
+                post_logout_redirect_uri:
+                  type: string
+                  example: https://client.example.com/logoutCallback
       description: |
-        Redirects the user to a page where they can log out and revoke the oauth tokens
+        Redirects the user to a page where they can log out and revoke the oauth tokens - for a detailed description of input parameters please see the user initiated logout spec
       responses:
         '302':
           description: Redirects the user to the logout page or back to the client app
@@ -2114,6 +2201,21 @@ paths:
       operationId: oauthEndSessionGET
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
+        - in: query
+          name: id_token_hint
+          schema:
+            type: string
+            example: asdfasdfASDF
+        - in: query
+          name: client_id
+          schema:
+            type: string
+            example: st-cl-example-client
+        - in: query
+          name: post_logout_redirect_uri
+          schema:
+            type: string
+            example: https://client.example.com/logoutCallback
       description: |
         Redirects the user to a page where they can log out and revoke the oauth tokens
       responses:
@@ -2148,6 +2250,11 @@ paths:
       operationId: oauthLoginInfoGET
       parameters:
         - $ref: '#/components/parameters/apiBasePath'
+        - in: query
+          name: loginChallenge
+          required: true
+          schema:
+            type: string
       description: |
         Retrieves information about the OAuth2 login
       responses:
@@ -2209,6 +2316,26 @@ paths:
         - $ref: '#/components/parameters/apiBasePath'
       description: |
         Logs out the user and revokes the access/refresh tokens based on the id_token_hint passed to the end_session endpoint
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - logoutChallenge
+              properties:
+                logoutChallenge:
+                  type: string
+                  example: asdfasdfasfd
+          x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - logoutChallenge
+              properties:
+                logoutChallenge:
+                  type: string
+                  example: asdfasdfasfd
       responses:
         '200':
           description: Accepts the logout request specified by the challenge and gets where the user should be redirected to
@@ -2792,3 +2919,8 @@ components:
       type: apiKey
       in: cookie
       name: sRefreshToken
+
+    OAuth2AccessTokenBearer:
+      description: An OAuth2 access token returned by the token or authorization endpoints during OAuth flows
+      type: http
+      scheme: bearer
