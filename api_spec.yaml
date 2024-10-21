@@ -1894,7 +1894,7 @@ paths:
       security:
         - OAuth2AccessTokenBearer: []
       description: |
-        Retrieves user information based on the access token passed to it
+        Retrieves user information based on the access token passed in the authorization header
       responses:
         '200':
           description: Retrieved user information
@@ -1988,7 +1988,6 @@ paths:
               properties:
                 token:
                   type: string
-                  example: asdfasdfasfd
                 client_id:
                   type: string
                   example: st-cl-test-client
@@ -2003,7 +2002,6 @@ paths:
               properties:
                 token:
                   type: string
-                  example: asdfasdfasfd
                 client_id:
                   type: string
                   example: st-cl-test-client
@@ -2054,7 +2052,6 @@ paths:
               properties:
                 token:
                   type: string
-                  example: asdfasdfasfd
           application/x-www-form-urlencoded:
             schema:
               type: object
@@ -2063,7 +2060,6 @@ paths:
               properties:
                 token:
                   type: string
-                  example: asdfasdfasfd
       responses:
         '200':
           description: Information about the token
@@ -2149,7 +2145,6 @@ paths:
               properties:
                 id_token_hint:
                   type: string
-                  example: asdfasdfASDF
                 client_id:
                   type: string
                   example: st-cl-example-client
@@ -2162,7 +2157,6 @@ paths:
               properties:
                 id_token_hint:
                   type: string
-                  example: asdfasdfASDF
                 client_id:
                   type: string
                   example: st-cl-example-client
@@ -2205,7 +2199,6 @@ paths:
           name: id_token_hint
           schema:
             type: string
-            example: asdfasdfASDF
         - in: query
           name: client_id
           schema:
@@ -2326,7 +2319,6 @@ paths:
               properties:
                 logoutChallenge:
                   type: string
-                  example: asdfasdfasfd
           x-www-form-urlencoded:
             schema:
               type: object
@@ -2335,7 +2327,6 @@ paths:
               properties:
                 logoutChallenge:
                   type: string
-                  example: asdfasdfasfd
       responses:
         '200':
           description: Accepts the logout request specified by the challenge and gets where the user should be redirected to
