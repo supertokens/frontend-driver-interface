@@ -1172,7 +1172,7 @@ paths:
               properties:
                 method:
                   $ref: '#/components/schemas/method'
-                formfields:
+                formFields:
                   $ref: '#/components/schemas/formFields'
                 token:
                   $ref: '#/components/schemas/token'
