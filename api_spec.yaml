@@ -1739,7 +1739,7 @@ paths:
     post:
       tags:
         - WebAuthn Recipe
-      operationId: registerOptions
+      operationId: webauthnRegisterOptions
       description: |
         Get WebAuthn registration options for a user
       parameters:
@@ -1876,7 +1876,7 @@ paths:
     post:
       tags:
         - WebAuthn Recipe
-      operationId: signInOptions
+      operationId: webauthnSignInOptions
       description: |
         Get WebAuthn sign in options
       parameters:
@@ -1929,7 +1929,7 @@ paths:
     post:
       tags:
         - WebAuthn Recipe
-      operationId: signUp
+      operationId: webauthnSignUp
       description: |
         Sign up a user with WebAuthn
       parameters:
@@ -1990,8 +1990,6 @@ paths:
                         $ref: '#/components/schemas/statusOK'
                       user:
                         $ref: '#/components/schemas/user'
-                      session:
-                        $ref: '#/components/schemas/session'
                   - $ref: '#/components/schemas/generalErrorResponse'
                   - type: object
                     properties:
@@ -2007,7 +2005,7 @@ paths:
     post:
       tags:
         - WebAuthn Recipe
-      operationId: signIn
+      operationId: webauthnSignIn
       description: |
         Sign in a user with WebAuthn
       parameters:
@@ -2068,8 +2066,6 @@ paths:
                         $ref: '#/components/schemas/statusOK'
                       user:
                         $ref: '#/components/schemas/user'
-                      session:
-                        $ref: '#/components/schemas/session'
                   - $ref: '#/components/schemas/generalErrorResponse'
                   - type: object
                     properties:
@@ -2093,7 +2089,7 @@ paths:
     post:
       tags:
         - WebAuthn Recipe
-      operationId: generateRecoverAccountToken
+      operationId: webauthnGenerateRecoverAccountToken
       description: |
         Generate a recovery token for a WebAuthn account
       parameters:
@@ -2138,7 +2134,7 @@ paths:
     post:
       tags:
         - WebAuthn Recipe
-      operationId: recoverAccount
+      operationId: webauthnRecoverAccount
       description: |
         Recover a WebAuthn account
       parameters:
@@ -2200,7 +2196,7 @@ paths:
     post:
       tags:
         - WebAuthn Recipe
-      operationId: registerCredential
+      operationId: webauthnRegisterCredential
       description: |
         Register a new WebAuthn credential for an existing user
       parameters:
@@ -2258,7 +2254,7 @@ paths:
     get:
       tags:
         - WebAuthn Recipe
-      operationId: emailExists
+      operationId: webauthnEmailExists
       description: |
         Check if a WebAuthn email exists
       parameters:
@@ -2855,19 +2851,6 @@ components:
         type:
           type: string
           enum: ["public-key"]
-
-    session:
-      type: object
-      properties:
-        accessToken:
-          $ref: '#/components/schemas/token'
-        refreshToken:
-          $ref: '#/components/schemas/token'
-        userId:
-          $ref: '#/components/schemas/userId'
-        userDataInJWT:
-          type: object
-          additionalProperties: true
 
   securitySchemes:
     AccessTokenCookie:
