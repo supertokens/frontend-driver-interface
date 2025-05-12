@@ -2833,6 +2833,8 @@ components:
     
     fieldErrorResponse:
       type: object
+      required:
+        - formFields
       properties:
         status:
           type: string
@@ -2841,6 +2843,9 @@ components:
           type: array
           items:
             type: object
+            required:
+              - id
+              - error
             properties:
               id:
                 type: string
