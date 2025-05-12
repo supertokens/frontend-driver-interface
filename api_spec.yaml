@@ -1199,7 +1199,7 @@ paths:
               properties:
                 method:
                   $ref: '#/components/schemas/method'
-                formfields:
+                formFields:
                   $ref: '#/components/schemas/formFields'
                 token:
                   $ref: '#/components/schemas/token'
@@ -3162,6 +3162,16 @@ components:
 
     user:
       type: object
+      required:
+        - id
+        - webauthn
+        - tenantIds
+        - timeJoined
+        - isPrimaryUser
+        - emails
+        - phoneNumbers
+        - thirdParty
+        - loginMethods
       properties:
         id:
           $ref: '#/components/schemas/userId'
@@ -3171,6 +3181,17 @@ components:
         isPrimaryUser:
           type: boolean
           example: true
+        webauthn:
+          type: object
+          required:
+            - credentialIds
+          properties:
+            credentialIds:
+              type: array
+              items:
+                type: string
+                example: "cred_123..."
+              
         tenantIds:
           type: array
           items:
@@ -3190,6 +3211,9 @@ components:
           type: array
           items:
             type: object
+            required:
+              - id
+              - userId
             properties:
               id:
                 type: string
@@ -3201,6 +3225,11 @@ components:
           type: array
           items:
             type: object
+            required:
+              - recipeId
+              - recipeUserId
+              - tenantIds
+              - timeJoined
             properties:
               recipeId:
                 type: string
@@ -3226,6 +3255,9 @@ components:
                 example: +36201234123
               thirdParty:
                 type: object
+                required:
+                  - id
+                  - userId
                 properties:
                   id:
                     type: string
@@ -3300,9 +3332,12 @@ components:
       type: array
       items:
         type: object
+        required:
+          - id
+          - value
         properties:
           id:
-            $ref: '#/components/schemas/id'
+            type: string
           value:
             type: string
       example: [ {id: email, value: johndoe@gmail.com},{id: password, value: testPass123}]
