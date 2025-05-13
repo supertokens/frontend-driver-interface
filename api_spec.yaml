@@ -71,6 +71,10 @@ paths:
                         $ref: '#/components/schemas/statusOK'
                       factors:
                         type: object
+                        required:
+                          - alreadySetup
+                          - allowedToSetup
+                          - next
                         properties:
                           alreadySetup:
                             type: array
@@ -1402,59 +1406,55 @@ paths:
                   - type: object
                     required:
                       - status
-                      - recipes
+                      - emailPassword
+                      - thirdParty
+                      - passwordless
+                      - firstFactors
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
-                      recipes:
+                      emailPassword:
                         type: object
                         required:
-                          - emailPassword
-                          - thirdParty
-                          - passwordless
-                          - firstFactors
+                          - enabled
                         properties:
-                          emailPassword:
-                            type: object
-                            required:
-                              - enabled
-                            properties:
-                              enabled:
-                                type: boolean
-                                example: true
-                          thirdParty:
-                            type: object
-                            required:
-                              - enabled
-                              - providers
-                            properties:
-                              enabled:
-                                type: boolean
-                                example: true
-                              providers:
-                                type: array
-                                items:
-                                  type: object
-                                  required:
-                                    - id
-                                  properties:
-                                    id:
-                                      $ref: '#/components/schemas/thirdPartyId'
-                                    name:
-                                      type: string
-                                      example: Google
-                          passwordless:
-                            type: object
-                            required:
-                              - enabled
-                            properties:
-                              enabled:
-                                type: boolean
-                                example: true
-                          firstFactors:
+                          enabled:
+                            type: boolean
+                            example: true
+                      thirdParty:
+                        type: object
+                        required:
+                          - enabled
+                          - providers
+                        properties:
+                          enabled:
+                            type: boolean
+                            example: true
+                          providers:
                             type: array
                             items:
-                              type: string
+                              type: object
+                              required:
+                                - id
+                                - name
+                              properties:
+                                id:
+                                  $ref: '#/components/schemas/thirdPartyId'
+                                name:
+                                  type: string
+                                  example: Google
+                      passwordless:
+                        type: object
+                        required:
+                          - enabled
+                        properties:
+                          enabled:
+                            type: boolean
+                            example: true
+                      firstFactors:
+                        type: array
+                        items:
+                          type: string
                   - $ref: '#/components/schemas/generalErrorResponse'
         '404':
           $ref: '#/components/responses/404'        
