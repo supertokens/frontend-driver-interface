@@ -2236,7 +2236,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
         
-  /{apiBasePath}/oauth/logininfo:
+  /{apiBasePath}/oauth/login/info:
     get:
       tags:
         - OAuth2Provider Recipe
@@ -2269,6 +2269,7 @@ paths:
                         description: Information about the current login flow
                         required:
                           - clientId
+                          - clientName
                         properties:
                           clientId:
                             type: string
