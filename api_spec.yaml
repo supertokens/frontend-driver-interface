@@ -800,7 +800,7 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
 
-  /{apiBasePath}/<tenantId>/passwordless/phoneNumber/exists:
+  /{apiBasePath}/<tenantId>/passwordless/phonenumber/exists:
     get:
       tags:
         - Passwordless Recipe
