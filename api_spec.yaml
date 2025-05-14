@@ -150,6 +150,11 @@ paths:
                         type: array
                         items:
                           type: object
+                          required:
+                            - name
+                            - period
+                            - skew
+                            - verified
                           properties:
                             name:
                               type: string
@@ -337,9 +342,13 @@ paths:
               schema:
                 oneOf:
                   - type: object
+                    required:
+                      - wasAlreadyVerified
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
+                      wasAlreadyVerified:
+                        type: boolean
                   - type: object
                     properties:
                       status:
