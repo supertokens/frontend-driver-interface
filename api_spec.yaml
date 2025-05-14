@@ -1967,6 +1967,15 @@ components:
 
     user:
       type: object
+      required:
+        - id
+        - timeJoined
+        - isPrimaryUser
+        - tenantIds
+        - emails
+        - phoneNumbers
+        - thirdParty
+        - loginMethods
       properties:
         id:
           $ref: '#/components/schemas/userId'
@@ -1995,6 +2004,9 @@ components:
           type: array
           items:
             type: object
+            required:
+              - id
+              - userId
             properties:
               id:
                 type: string
@@ -2006,6 +2018,11 @@ components:
           type: array
           items:
             type: object
+            required:
+              - recipeId
+              - recipeUserId
+              - tenantIds
+              - timeJoined
             properties:
               recipeId:
                 type: string
@@ -2031,6 +2048,9 @@ components:
                 example: +36201234123
               thirdParty:
                 type: object
+                required:
+                  - id
+                  - userId
                 properties:
                   id:
                     type: string
