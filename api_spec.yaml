@@ -2917,6 +2917,103 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
+  /{apiBasePath}/<tenantId>/webauthn/credential/remove:
+      post:
+        tags:
+          - WebAuthn Recipe
+        operationId: webauthnRemoveCredential
+        description: |
+          Remove a WebAuthn credential for an existing user
+        parameters:
+          - $ref: '#/components/parameters/apiBasePath'
+          - $ref: '#/components/parameters/webauthnRid'
+          - $ref: '#/components/parameters/anti-csrf'
+        security:
+          - AccessTokenBearer: []
+          - AccessTokenCookie: []
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - webauthnCredentialId
+                properties:
+                  webauthnCredentialId:
+                    type: string
+                    example: "cred_123..."
+        responses:
+          '200':
+            description: Credential removal response
+            content:
+              application/json:
+                schema:
+                  oneOf:
+                    - type: object
+                      properties:
+                        status:
+                          $ref: '#/components/schemas/statusOK'
+                    - $ref: '#/components/schemas/generalErrorResponse'
+                    - type: object
+                      properties:
+                        status:
+                          type: string
+                          enum: ["CREDENTIAL_NOT_FOUND_ERROR"]
+          '404':
+            $ref: '#/components/responses/404'
+          '500':
+            $ref: '#/components/responses/500'
+
+  /{apiBasePath}/<tenantId>/webauthn/credential/list:
+      get:
+        tags:
+          - WebAuthn Recipe
+        operationId: webauthnListCredentials
+        description: |
+          List all WebAuthn credentials for an existing user
+        parameters:
+          - $ref: '#/components/parameters/apiBasePath'
+          - $ref: '#/components/parameters/webauthnRid'
+          - $ref: '#/components/parameters/anti-csrf'
+        security:
+          - AccessTokenBearer: []
+          - AccessTokenCookie: []
+        responses:
+          '200':
+            description: Credential list response
+            content:
+              application/json:
+                schema:
+                  oneOf:
+                    - type: object
+                      properties:
+                        status:
+                          $ref: '#/components/schemas/statusOK'
+                      credentials:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            webauthnCredentialId: 
+                              type: string
+                              example: "cred_123..."
+                            relyingPartyId:
+                              type: string
+                              example: "https://example.com"
+                            createdAt:
+                              type: number
+                              example: 1638433545183
+                    - $ref: '#/components/schemas/generalErrorResponse'
+                    - type: object
+                      properties:
+                        status:
+                          type: string
+                          enum: ["CREDENTIAL_NOT_FOUND_ERROR"]
+          '404':
+            $ref: '#/components/responses/404'
+          '500':
+            $ref: '#/components/responses/500'
+
   /{apiBasePath}/<tenantId>/webauthn/email/exists:
     get:
       tags:
