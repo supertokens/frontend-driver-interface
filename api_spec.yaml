@@ -72,6 +72,10 @@ paths:
                         $ref: '#/components/schemas/statusOK'
                       factors:
                         type: object
+                        required:
+                          - alreadySetup
+                          - allowedToSetup
+                          - next
                         properties:
                           alreadySetup:
                             type: array
@@ -148,6 +152,11 @@ paths:
                         type: array
                         items:
                           type: object
+                          required:
+                            - name
+                            - period
+                            - skew
+                            - verified
                           properties:
                             name:
                               type: string
@@ -335,9 +344,13 @@ paths:
               schema:
                 oneOf:
                   - type: object
+                    required:
+                      - wasAlreadyVerified
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
+                      wasAlreadyVerified:
+                        type: boolean
                   - type: object
                     properties:
                       status:
@@ -798,7 +811,7 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
 
-  /{apiBasePath}/<tenantId>/passwordless/phoneNumber/exists:
+  /{apiBasePath}/<tenantId>/passwordless/phonenumber/exists:
     get:
       tags:
         - Passwordless Recipe
@@ -1199,7 +1212,7 @@ paths:
               properties:
                 method:
                   $ref: '#/components/schemas/method'
-                formfields:
+                formFields:
                   $ref: '#/components/schemas/formFields'
                 token:
                   $ref: '#/components/schemas/token'
@@ -1403,59 +1416,55 @@ paths:
                   - type: object
                     required:
                       - status
-                      - recipes
+                      - emailPassword
+                      - thirdParty
+                      - passwordless
+                      - firstFactors
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
-                      recipes:
+                      emailPassword:
                         type: object
                         required:
-                          - emailPassword
-                          - thirdParty
-                          - passwordless
-                          - firstFactors
+                          - enabled
                         properties:
-                          emailPassword:
-                            type: object
-                            required:
-                              - enabled
-                            properties:
-                              enabled:
-                                type: boolean
-                                example: true
-                          thirdParty:
-                            type: object
-                            required:
-                              - enabled
-                              - providers
-                            properties:
-                              enabled:
-                                type: boolean
-                                example: true
-                              providers:
-                                type: array
-                                items:
-                                  type: object
-                                  required:
-                                    - id
-                                  properties:
-                                    id:
-                                      $ref: '#/components/schemas/thirdPartyId'
-                                    name:
-                                      type: string
-                                      example: Google
-                          passwordless:
-                            type: object
-                            required:
-                              - enabled
-                            properties:
-                              enabled:
-                                type: boolean
-                                example: true
-                          firstFactors:
+                          enabled:
+                            type: boolean
+                            example: true
+                      thirdParty:
+                        type: object
+                        required:
+                          - enabled
+                          - providers
+                        properties:
+                          enabled:
+                            type: boolean
+                            example: true
+                          providers:
                             type: array
                             items:
-                              type: string
+                              type: object
+                              required:
+                                - id
+                                - name
+                              properties:
+                                id:
+                                  $ref: '#/components/schemas/thirdPartyId'
+                                name:
+                                  type: string
+                                  example: Google
+                      passwordless:
+                        type: object
+                        required:
+                          - enabled
+                        properties:
+                          enabled:
+                            type: boolean
+                            example: true
+                      firstFactors:
+                        type: array
+                        items:
+                          type: string
                   - $ref: '#/components/schemas/generalErrorResponse'
         '404':
           $ref: '#/components/responses/404'        
@@ -1493,7 +1502,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/user/email/verify/token:
+  /{apiBasePath}/user/email/verify/token:
     post:
       tags:
         - EmailVerification Recipe
@@ -2237,7 +2246,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
         
-  /{apiBasePath}/oauth/logininfo:
+  /{apiBasePath}/oauth/login/info:
     get:
       tags:
         - OAuth2Provider Recipe
@@ -2270,6 +2279,7 @@ paths:
                         description: Information about the current login flow
                         required:
                           - clientId
+                          - clientName
                         properties:
                           clientId:
                             type: string
@@ -2402,7 +2412,7 @@ paths:
                               expectedValue: val
                               actualValue: claimVal
 
-  /{apiBasePath}/<tenantId>/webauthn/register/options:
+  /{apiBasePath}/<tenantId>/webauthn/options/register:
     post:
       tags:
         - WebAuthn Recipe
@@ -2441,6 +2451,18 @@ paths:
               schema:
                 oneOf:
                   - type: object
+                    required:
+                      - webauthnGeneratedOptionsId
+                      - createdAt
+                      - expiresAt
+                      - rp
+                      - user
+                      - challenge
+                      - timeout
+                      - excludeCredentials
+                      - attestation
+                      - pubKeyCredParams
+                      - authenticatorSelection
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
@@ -2455,6 +2477,9 @@ paths:
                         example: "2024-03-20T10:05:00Z"
                       rp:
                         type: object
+                        required:
+                          - id
+                          - name
                         properties:
                           id:
                             type: string
@@ -2464,6 +2489,10 @@ paths:
                             example: "Example Site"
                       user:
                         type: object
+                        required:
+                          - id
+                          - name
+                          - displayName
                         properties:
                           id:
                             type: string
@@ -2484,6 +2513,10 @@ paths:
                         type: array
                         items:
                           type: object
+                          required:
+                            - id
+                            - type
+                            - transports
                           properties:
                             id:
                               type: string
@@ -2502,15 +2535,22 @@ paths:
                         type: array
                         items:
                           type: object
+                          required:
+                            - alg
+                            - type
                           properties:
                             alg:
                               type: number
                               example: -7
                             type:
                               type: string
-                              example: "public-key"
+                              enum: ["public-key"]
                       authenticatorSelection:
                         type: object
+                        required:
+                          - requireResidentKey
+                          - residentKey
+                          - userVerification
                         properties:
                           requireResidentKey:
                             type: boolean
@@ -2539,7 +2579,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/webauthn/signin/options:
+  /{apiBasePath}/<tenantId>/webauthn/options/signin:
     post:
       tags:
         - WebAuthn Recipe
@@ -3044,6 +3084,154 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
+  /{apiBasePath}/<tenantId>/user/webauthn/reset/token:
+    post:
+      tags:
+        - WebAuthn Recipe
+      operationId: webauthnResetToken
+      description: |
+        Reset a WebAuthn account
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/webauthnRid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Reset token response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required:
+                      - status
+                    properties:
+                      status:
+                        type: string
+                        enum: [OK]
+
+                  - type: object
+                    required:
+                      - status
+                      - message
+                    properties:
+                      status:
+                        type: string
+                        enum: [GENERAL_ERROR]
+                      message:
+                        type: string
+
+                  - type: object
+                    required:
+                      - status
+                      - reason
+                    properties:
+                      status:
+                        type: string
+                        enum: [RECOVER_ACCOUNT_NOT_ALLOWED]
+                      reason:
+                        type: string
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  
+  /{apiBasePath}/<tenantId>/user/webauthn/reset:
+    post:
+      tags:
+        - WebAuthn Recipe
+      operationId: webauthnReset
+      description: |
+        Reset a WebAuthn account
+      parameters:
+        - $ref: '#/components/parameters/apiBasePath'
+        - $ref: '#/components/parameters/webauthnRid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+                - webauthnGeneratedOptionsId
+                - credential
+              properties:
+                token:
+                  type: string
+                webauthnGeneratedOptionsId:
+                  type: string
+                credential:
+                  $ref: '#/components/schemas/registrationPayload'
+      responses:
+        '200':
+          description: WebAuthn account reset response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    required:
+                      - status
+                      - user
+                      - email
+                    properties:
+                      status:
+                        type: string
+                        enum: [OK]
+                      user:
+                        $ref: '#/components/schemas/user'
+                      email:
+                        type: string
+
+                  - type: object
+                    required:
+                      - status
+                      - message
+                    properties:
+                      status:
+                        type: string
+                        enum: [GENERAL_ERROR]
+                      message:
+                        type: string
+
+                  - type: object
+                    required:
+                      - status
+                    properties:
+                      status:
+                        type: string
+                        enum:
+                          - RECOVER_ACCOUNT_TOKEN_INVALID_ERROR
+                          - INVALID_CREDENTIALS_ERROR
+                          - OPTIONS_NOT_FOUND_ERROR
+                          - INVALID_OPTIONS_ERROR
+
+                  - type: object
+                    required:
+                      - status
+                      - reason
+                    properties:
+                      status:
+                        type: string
+                        enum: [INVALID_AUTHENTICATOR_ERROR]
+                      reason:
+                        type: string
+
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
 
 components:
   parameters:
@@ -3259,6 +3447,16 @@ components:
 
     user:
       type: object
+      required:
+        - id
+        - webauthn
+        - tenantIds
+        - timeJoined
+        - isPrimaryUser
+        - emails
+        - phoneNumbers
+        - thirdParty
+        - loginMethods
       properties:
         id:
           $ref: '#/components/schemas/userId'
@@ -3268,6 +3466,17 @@ components:
         isPrimaryUser:
           type: boolean
           example: true
+        webauthn:
+          type: object
+          required:
+            - credentialIds
+          properties:
+            credentialIds:
+              type: array
+              items:
+                type: string
+                example: "cred_123..."
+              
         tenantIds:
           type: array
           items:
@@ -3287,6 +3496,9 @@ components:
           type: array
           items:
             type: object
+            required:
+              - id
+              - userId
             properties:
               id:
                 type: string
@@ -3298,6 +3510,11 @@ components:
           type: array
           items:
             type: object
+            required:
+              - recipeId
+              - recipeUserId
+              - tenantIds
+              - timeJoined
             properties:
               recipeId:
                 type: string
@@ -3323,6 +3540,9 @@ components:
                 example: +36201234123
               thirdParty:
                 type: object
+                required:
+                  - id
+                  - userId
                 properties:
                   id:
                     type: string
@@ -3397,9 +3617,12 @@ components:
       type: array
       items:
         type: object
+        required:
+          - id
+          - value
         properties:
           id:
-            $ref: '#/components/schemas/id'
+            type: string
           value:
             type: string
       example: [ {id: email, value: johndoe@gmail.com},{id: password, value: testPass123}]
@@ -3483,6 +3706,8 @@ components:
     
     fieldErrorResponse:
       type: object
+      required:
+        - formFields
       properties:
         status:
           type: string
@@ -3491,6 +3716,9 @@ components:
           type: array
           items:
             type: object
+            required:
+              - id
+              - error
             properties:
               id:
                 type: string
@@ -3537,6 +3765,22 @@ components:
       type: string
       enum:
         - Not Found
+    
+    clientExtensionResults:
+      type: object
+      properties:
+        appid:
+          type: boolean
+          example: true
+        credProps:
+          type: object
+          properties:
+            rk:
+              type: boolean
+              example: true
+        hmacCreateSecret:
+          type: boolean
+          example: true
 
     registrationPayload:
       type: object
@@ -3556,8 +3800,8 @@ components:
           type: string
           enum: ["platform", "cross-platform"]
         clientExtensionResults:
-          type: object
-          additionalProperties: true
+          $ref: '#/components/schemas/clientExtensionResults'
+              
         response:
           type: object
           required:
@@ -3606,8 +3850,7 @@ components:
           type: string
           enum: ["platform", "cross-platform"]
         clientExtensionResults:
-          type: object
-          additionalProperties: true
+          $ref: '#/components/schemas/clientExtensionResults'
         response:
           type: object
           required:
