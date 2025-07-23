@@ -70,6 +70,10 @@ paths:
                         $ref: '#/components/schemas/statusOK'
                       factors:
                         type: object
+                        required:
+                          - alreadySetup
+                          - allowedToSetup
+                          - next
                         properties:
                           alreadySetup:
                             type: array
@@ -146,6 +150,11 @@ paths:
                         type: array
                         items:
                           type: object
+                          required:
+                            - name
+                            - period
+                            - skew
+                            - verified
                           properties:
                             name:
                               type: string
@@ -333,9 +342,13 @@ paths:
               schema:
                 oneOf:
                   - type: object
+                    required:
+                      - wasAlreadyVerified
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
+                      wasAlreadyVerified:
+                        type: boolean
                   - type: object
                     properties:
                       status:
@@ -796,7 +809,7 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
 
-  /{apiBasePath}/<tenantId>/passwordless/phoneNumber/exists:
+  /{apiBasePath}/<tenantId>/passwordless/phonenumber/exists:
     get:
       tags:
         - Passwordless Recipe
@@ -1401,59 +1414,55 @@ paths:
                   - type: object
                     required:
                       - status
-                      - recipes
+                      - emailPassword
+                      - thirdParty
+                      - passwordless
+                      - firstFactors
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
-                      recipes:
+                      emailPassword:
                         type: object
                         required:
-                          - emailPassword
-                          - thirdParty
-                          - passwordless
-                          - firstFactors
+                          - enabled
                         properties:
-                          emailPassword:
-                            type: object
-                            required:
-                              - enabled
-                            properties:
-                              enabled:
-                                type: boolean
-                                example: true
-                          thirdParty:
-                            type: object
-                            required:
-                              - enabled
-                              - providers
-                            properties:
-                              enabled:
-                                type: boolean
-                                example: true
-                              providers:
-                                type: array
-                                items:
-                                  type: object
-                                  required:
-                                    - id
-                                  properties:
-                                    id:
-                                      $ref: '#/components/schemas/thirdPartyId'
-                                    name:
-                                      type: string
-                                      example: Google
-                          passwordless:
-                            type: object
-                            required:
-                              - enabled
-                            properties:
-                              enabled:
-                                type: boolean
-                                example: true
-                          firstFactors:
+                          enabled:
+                            type: boolean
+                            example: true
+                      thirdParty:
+                        type: object
+                        required:
+                          - enabled
+                          - providers
+                        properties:
+                          enabled:
+                            type: boolean
+                            example: true
+                          providers:
                             type: array
                             items:
-                              type: string
+                              type: object
+                              required:
+                                - id
+                                - name
+                              properties:
+                                id:
+                                  $ref: '#/components/schemas/thirdPartyId'
+                                name:
+                                  type: string
+                                  example: Google
+                      passwordless:
+                        type: object
+                        required:
+                          - enabled
+                        properties:
+                          enabled:
+                            type: boolean
+                            example: true
+                      firstFactors:
+                        type: array
+                        items:
+                          type: string
                   - $ref: '#/components/schemas/generalErrorResponse'
         '404':
           $ref: '#/components/responses/404'        
@@ -1491,7 +1500,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/user/email/verify/token:
+  /{apiBasePath}/user/email/verify/token:
     post:
       tags:
         - EmailVerification Recipe
@@ -1958,6 +1967,15 @@ components:
 
     user:
       type: object
+      required:
+        - id
+        - timeJoined
+        - isPrimaryUser
+        - tenantIds
+        - emails
+        - phoneNumbers
+        - thirdParty
+        - loginMethods
       properties:
         id:
           $ref: '#/components/schemas/userId'
@@ -1986,6 +2004,9 @@ components:
           type: array
           items:
             type: object
+            required:
+              - id
+              - userId
             properties:
               id:
                 type: string
@@ -1997,6 +2018,11 @@ components:
           type: array
           items:
             type: object
+            required:
+              - recipeId
+              - recipeUserId
+              - tenantIds
+              - timeJoined
             properties:
               recipeId:
                 type: string
@@ -2022,6 +2048,9 @@ components:
                 example: +36201234123
               thirdParty:
                 type: object
+                required:
+                  - id
+                  - userId
                 properties:
                   id:
                     type: string
@@ -2182,6 +2211,8 @@ components:
     
     fieldErrorResponse:
       type: object
+      required:
+        - formFields
       properties:
         status:
           type: string
@@ -2190,6 +2221,9 @@ components:
           type: array
           items:
             type: object
+            required:
+              - id
+              - error
             properties:
               id:
                 type: string
