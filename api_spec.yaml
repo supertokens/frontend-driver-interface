@@ -3040,6 +3040,9 @@ paths:
                             relyingPartyId:
                               type: string
                               example: "https://example.com"
+                            recipeUserId:
+                              type: string
+                              example: "user_123..."
                             createdAt:
                               type: number
                               example: 1638433545183
