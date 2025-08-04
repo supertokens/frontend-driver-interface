@@ -2921,10 +2921,14 @@ paths:
               required:
                 - webauthnGeneratedOptionsId
                 - credential
+                - recipeUserId
               properties:
                 webauthnGeneratedOptionsId:
                   type: string
                   example: "opt_123..."
+                recipeUserId:
+                  type: string
+                  example: "user_123..."
                 credential:
                   $ref: '#/components/schemas/registrationPayload'
       responses:
