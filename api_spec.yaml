@@ -3,8 +3,8 @@ servers: []
 info:
   description: |
     These are the APIs exposed by our backend SDK. To be consumed by the frontend only.
-    `<tenantId>` in all the APIs are optional. Its default value is `public`
-  version: "4.2.0"
+    `{tenantId}` in all the APIs are optional. Its default value is `public`
+  version: '4.2.0'
   title: Frontend Driver Interface
   contact:
     email: team@supertokens.io
@@ -27,6 +27,7 @@ paths:
       tags:
         - MultiFactorAuth Recipe
       operationId: getMFAInfo
+      summary: Get MFA factors information
       description: |
         Returns information about the auth factors of the current user and refreshes the related session claim
       parameters:
@@ -67,6 +68,8 @@ paths:
               schema:
                 oneOf:
                   - type: object
+                    title: MFA Info Response
+                    description: Successful response containing information about the auth factors of the current user
                     properties:
                       status:
                         $ref: '#/components/schemas/statusOK'
@@ -128,6 +131,7 @@ paths:
       tags:
         - TOTP Recipe
       operationId: listTOTPdevices
+      summary: List TOTP devices
       description: |
         List the TOTP devices of the current user
       parameters:
@@ -160,7 +164,7 @@ paths:
                           properties:
                             name:
                               type: string
-                              example: "asdf123"
+                              example: 'asdf123'
                             period:
                               type: number
                               example: 30
@@ -183,6 +187,7 @@ paths:
       tags:
         - TOTP Recipe
       operationId: createTOTPDevice
+      summary: Create TOTP device
       description: |
         Creates an unverified totp device
       parameters:
@@ -201,7 +206,7 @@ paths:
               properties:
                 deviceName: 
                   type: string
-                  example: "asdf123"
+                  example: 'asdf123'
       responses:
         '200':
           description: |
@@ -217,13 +222,13 @@ paths:
                         $ref: '#/components/schemas/statusOK'
                       deviceName:
                         type: string
-                        example: "asfd123"
+                        example: 'asfd123'
                       qrCodeString:
                         type: string
-                        example: "otpauth://totp/Supertokens:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Supertokens"
+                        example: 'otpauth://totp/Supertokens:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Supertokens'
                       secret:
                         type: string
-                        example: "JBSWY3DPEHPK3PXP"
+                        example: 'JBSWY3DPEHPK3PXP'
                   - type: object
                     properties:
                       status:
@@ -245,6 +250,7 @@ paths:
       tags:
         - TOTP Recipe
       operationId: removeTOTPDevice
+      summary: Remove TOTP device
       description: |
         Removes a totp device
       parameters:
@@ -263,7 +269,7 @@ paths:
               properties:
                 deviceName: 
                   type: string
-                  example: "asdf123"
+                  example: 'asdf123'
       responses:
         '200':
           description: Success report
@@ -291,6 +297,7 @@ paths:
       tags:
         - TOTP Recipe
       operationId: verifyTOTPDevice
+      summary: Verify TOTP device
       description: |
         Checks that the TOTP sent in the body belongs to the totp device (specified by deviceName, belonging to the session user)
       parameters:
@@ -309,10 +316,10 @@ paths:
               properties:
                 totp: 
                   type: string
-                  example: "123456"
+                  example: '123456'
                 deviceName:
                   type: string
-                  example: "asdf123asdf"
+                  example: 'asdf123asdf'
 
       responses:
         '200':
@@ -391,6 +398,7 @@ paths:
       tags:
         - TOTP Recipe
       operationId: verifyTOTP
+      summary: Verify TOTP code
       description: |
         Checks that the TOTP sent in the body belongs to a verified totp device of the session user
       parameters:
@@ -409,7 +417,7 @@ paths:
               properties:
                 totp: 
                   type: string
-                  example: "123456"
+                  example: '123456'
       responses:
         '200':
           description: Verification result and optionally the session with a refreshed MFA claim
@@ -470,11 +478,12 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/signinup/code:
+  /{apiBasePath}/{tenantId}/signinup/code:
     post:
       tags:
         - Passwordless Recipe
       operationId: passwordlessSignInUpStart
+      summary: Start passwordless sign in/up
       description: |
         Start sign in/up process with passwordless
       parameters:
@@ -529,7 +538,7 @@ paths:
                         enum: ['SIGN_IN_UP_NOT_ALLOWED']
                       reason:
                         type: string
-                        example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
+                        example: 'Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)'
                   - $ref: '#/components/schemas/generalErrorResponse'
 
         '403':
@@ -541,11 +550,12 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
 
-  /{apiBasePath}/<tenantId>/signinup/code/resend:
+  /{apiBasePath}/{tenantId}/signinup/code/resend:
     post:
       tags:
         - Passwordless Recipe
       operationId: passwordlessSignInUpResend
+      summary: Resend passwordless code
       description: |
         Resend passwordless code
       parameters:
@@ -588,11 +598,12 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/signinup/code/consume:
+  /{apiBasePath}/{tenantId}/signinup/code/consume:
     post:
       tags:
         - Passwordless Recipe
       operationId: passwordlessSignInUpConsume
+      summary: Complete passwordless sign in/up
       description: |
         Finish sign in/up process with passwordless
       parameters:
@@ -699,7 +710,7 @@ paths:
                         enum: ['SIGN_IN_UP_NOT_ALLOWED']
                       reason:
                         type: string
-                        example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
+                        example: 'Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)'
                   
                   - $ref: '#/components/schemas/generalErrorResponse'
 
@@ -712,12 +723,13 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
 
-  /{apiBasePath}/<tenantId>/signup/email/exists⠀⠀:
+  /{apiBasePath}/{tenantId}/signup/email/exists⠀⠀:
     get:
       deprecated: true
       tags:
         - Passwordless Recipe
       operationId: passwordlessEmailExistsDepr
+      summary: Check if email exists (deprecated)
       description: |
         Check if an email exists
         Note that there is an invisible character at the end of the path, this was to avoid a conflict with the OpenAPI spec. 
@@ -746,11 +758,12 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
 
-  /{apiBasePath}/<tenantId>/passwordless/email/exists:
+  /{apiBasePath}/{tenantId}/passwordless/email/exists:
     get:
       tags:
         - Passwordless Recipe
       operationId: passwordlessEmailExists
+      summary: Check email exists
       description: |
         Check if an email exists
       parameters:
@@ -778,12 +791,13 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
 
-  /{apiBasePath}/<tenantId>/signup/phoneNumber/exists:
+  /{apiBasePath}/{tenantId}/signup/phoneNumber/exists:
     get:
       deprecated: true
       tags:
         - Passwordless Recipe
       operationId: passwordlessPhoneNumberExistsDepr
+      summary: Check phone exists (deprecated)
       description: |
         Check if a phone number exists
       parameters:
@@ -811,11 +825,12 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
 
-  /{apiBasePath}/<tenantId>/passwordless/phonenumber/exists:
+  /{apiBasePath}/{tenantId}/passwordless/phonenumber/exists:
     get:
       tags:
         - Passwordless Recipe
       operationId: passwordlessPhoneNumberExists
+      summary: Check phone exists
       description: |
         Check if a phone number exists
       parameters:
@@ -848,6 +863,7 @@ paths:
       tags:
         - Session Recipe
       operationId: signout
+      summary: Sign out user
       description: |
         Logout user
       security:
@@ -874,12 +890,12 @@ paths:
               description: Set to an empty string to trigger token clearing in the client SDK
               schema:
                 type: string
-                example: ""
+                example: ''
             st-refresh-token:
               description: Set to an empty string to trigger token clearing in the client SDK
               schema:
                 type: string
-                example: ""
+                example: ''
             front-token:
               schema:
                 type: string
@@ -953,11 +969,12 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
   
-  /{apiBasePath}/<tenantId>/signin:
+  /{apiBasePath}/{tenantId}/signin:
     post:
       tags:
         - EmailPassword Recipe
       operationId: signIn
+      summary: Sign in with email
       description: |
         Signin a user with email ID and password
       parameters: 
@@ -1023,11 +1040,12 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
   
-  /{apiBasePath}/<tenantId>/signup:
+  /{apiBasePath}/{tenantId}/signup:
     post:
       tags:
         - EmailPassword Recipe
       operationId: signUp
+      summary: Sign up with email
       description: |
         Signup a user with email ID and password
       parameters: 
@@ -1092,7 +1110,7 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
   
-  /{apiBasePath}/<tenantId>/signup/email/exists:
+  /{apiBasePath}/{tenantId}/signup/email/exists:
     get:
       deprecated: true
       tags:
@@ -1125,7 +1143,7 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
      
-  /{apiBasePath}/<tenantId>/emailpassword/email/exists:
+  /{apiBasePath}/{tenantId}/emailpassword/email/exists:
     get:
       tags:
         - EmailPassword Recipe
@@ -1157,7 +1175,7 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
    
-  /{apiBasePath}/<tenantId>/user/password/reset/token:
+  /{apiBasePath}/{tenantId}/user/password/reset/token:
     post:
       tags:
         - EmailPassword Recipe
@@ -1194,7 +1212,7 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
   
-  /{apiBasePath}/<tenantId>/user/password/reset:
+  /{apiBasePath}/{tenantId}/user/password/reset:
     post:
       tags:
         - EmailPassword Recipe
@@ -1216,7 +1234,7 @@ paths:
                   $ref: '#/components/schemas/formFields'
                 token:
                   $ref: '#/components/schemas/token'
-              example:  { method: "token", formFields: [{id: "password", value: "newPass123"} ], token: "ZTRiOTBjNz...jI5MTZlODkxw"}
+              example:  { method: 'token', formFields: [{id: 'password', value: 'newPass123'} ], token: 'ZTRiOTBjNz...jI5MTZlODkxw'}
       responses:
         '200':
           description: Reset a password using password reset token
@@ -1235,7 +1253,7 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
   
-  /{apiBasePath}/<tenantId>/signinup:
+  /{apiBasePath}/{tenantId}/signinup:
     post:
       tags:
         - ThirdParty Recipe
@@ -1270,8 +1288,8 @@ paths:
                         redirectURIQueryParams:
                           type: object
                           example:
-                            code: "neqmpdsfuqe141m5lk437867masdf"
-                            state: "ljayfgqewertbh13245njw0"
+                            code: 'neqmpdsfuqe141m5lk437867masdf'
+                            state: 'ljayfgqewertbh13245njw0'
                         pkceCodeVerifier:
                           type: string
                           example: abcd1234
@@ -1337,7 +1355,7 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
   
-  /{apiBasePath}/<tenantId>/authorisationurl:
+  /{apiBasePath}/{tenantId}/authorisationurl:
     get:
       tags:
         - ThirdParty Recipe
@@ -1391,7 +1409,7 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
   
-  /{apiBasePath}/<tenantId>/loginmethods:
+  /{apiBasePath}/{tenantId}/loginmethods:
     get:
       tags:
         - Multitenancy Recipe
@@ -1488,10 +1506,10 @@ paths:
               properties:
                 code:
                   type: string
-                  description: "The Authorization code which will be exchanged for an access token"
+                  description: 'The Authorization code which will be exchanged for an access token'
                 state:
                   type: string
-                  description: "A unique string used to mitigate CSRF attacks"
+                  description: 'A unique string used to mitigate CSRF attacks'
       responses:
         '303':
           description: Redirects the user to the client's app.
@@ -1536,7 +1554,7 @@ paths:
         '500':
           $ref: '#/components/responses/500' 
   
-  /{apiBasePath}/<tenantId>/user/email/verify:
+  /{apiBasePath}/{tenantId}/user/email/verify:
     post:
       tags:
         - EmailVerification Recipe
@@ -1662,7 +1680,7 @@ paths:
                             alg:
                               type: string
                               description: The algorithm to use when creating the JWT.
-                              enum: ["RS256"]
+                              enum: ['RS256']
                             kty:
                               type: string
                               example: RSA
@@ -1743,17 +1761,17 @@ paths:
                         type: array
                         items:
                           type: string
-                          enum: ["public"]
+                          enum: ['public']
                       id_token_signing_alg_values_supported: 
                         type: array
                         items:
                           type: string
-                          enum: ["RS256"]
+                          enum: ['RS256']
                       response_types_supported: 
                         type: array
                         items:
                           type: string
-                          enum: ["code", "id_token", "id_token token"]
+                          enum: ['code', 'id_token', 'id_token token']
                   - $ref: '#/components/schemas/generalErrorResponse'
 
         '400':
@@ -1866,7 +1884,7 @@ paths:
                       
                       expires_in:
                         type: number
-                        description: 'The lifetime in seconds of the access token (integer). For example, the value "3600" denotes that the access token will expire in one hour from the time the response was generated.'
+                        description: 'The lifetime in seconds of the access token (integer). For example, the value '3600' denotes that the access token will expire in one hour from the time the response was generated.'
                       
                       id_token:
                         type: string
@@ -1874,7 +1892,7 @@ paths:
                       
                       refresh_token:
                         type: string
-                        description: 'The refresh token, which can be used to obtain new access tokens. To retrieve it add the scope "offline" to your access token request.'
+                        description: 'The refresh token, which can be used to obtain new access tokens. To retrieve it add the scope 'offline' to your access token request.'
                       
                       scope:
                         type: string
@@ -1963,7 +1981,7 @@ paths:
             WWW-Authenticate:
               schema:
                 type: string
-                example: 'Bearer error="invalid_token"'
+                example: 'Bearer error=\'invalid_token\''
           content:
             application/json:
               schema:
@@ -2408,11 +2426,11 @@ paths:
                           reason:
                             type: object
                             example: 
-                              message: "value does not exist"
+                              message: 'value does not exist'
                               expectedValue: val
                               actualValue: claimVal
 
-  /{apiBasePath}/<tenantId>/webauthn/options/register:
+  /{apiBasePath}/{tenantId}/webauthn/options/register:
     post:
       tags:
         - WebAuthn Recipe
@@ -2435,14 +2453,14 @@ paths:
                       $ref: '#/components/schemas/email'
                     displayName:
                       type: string
-                      example: "John Doe"
+                      example: 'John Doe'
                 - type: object
                   required:
                     - recoverAccountToken
                   properties:
                     recoverAccountToken:
                       type: string
-                      example: "abc123..."
+                      example: 'abc123...'
       responses:
         '200':
           description: WebAuthn registration options
@@ -2468,13 +2486,13 @@ paths:
                         $ref: '#/components/schemas/statusOK'
                       webauthnGeneratedOptionsId:
                         type: string
-                        example: "opt_123..."
+                        example: 'opt_123...'
                       createdAt:
                         type: string
-                        example: "2024-03-20T10:00:00Z"
+                        example: '2024-03-20T10:00:00Z'
                       expiresAt:
                         type: string
-                        example: "2024-03-20T10:05:00Z"
+                        example: '2024-03-20T10:05:00Z'
                       rp:
                         type: object
                         required:
@@ -2483,10 +2501,10 @@ paths:
                         properties:
                           id:
                             type: string
-                            example: "example.com"
+                            example: 'example.com'
                           name:
                             type: string
-                            example: "Example Site"
+                            example: 'Example Site'
                       user:
                         type: object
                         required:
@@ -2496,16 +2514,16 @@ paths:
                         properties:
                           id:
                             type: string
-                            example: "user_123..."
+                            example: 'user_123...'
                           name:
                             type: string
-                            example: "john@example.com"
+                            example: 'john@example.com'
                           displayName:
                             type: string
-                            example: "John Doe"
+                            example: 'John Doe'
                       challenge:
                         type: string
-                        example: "base64challenge..."
+                        example: 'base64challenge...'
                       timeout:
                         type: number
                         example: 300000
@@ -2522,15 +2540,15 @@ paths:
                               type: string
                             type:
                               type: string
-                              enum: ["public-key"]
+                              enum: ['public-key']
                             transports:
                               type: array
                               items:
                                 type: string
-                                enum: ["ble", "hybrid", "internal", "nfc", "usb"]
+                                enum: ['ble', 'hybrid', 'internal', 'nfc', 'usb']
                       attestation:
                         type: string
-                        enum: ["none", "indirect", "direct", "enterprise"]
+                        enum: ['none', 'indirect', 'direct', 'enterprise']
                       pubKeyCredParams:
                         type: array
                         items:
@@ -2544,7 +2562,7 @@ paths:
                               example: -7
                             type:
                               type: string
-                              enum: ["public-key"]
+                              enum: ['public-key']
                       authenticatorSelection:
                         type: object
                         required:
@@ -2556,30 +2574,30 @@ paths:
                             type: boolean
                           residentKey:
                             type: string
-                            enum: ["required", "preferred", "discouraged"]
+                            enum: ['required', 'preferred', 'discouraged']
                           userVerification:
                             type: string
-                            enum: ["required", "preferred", "discouraged"]
+                            enum: ['required', 'preferred', 'discouraged']
                   - $ref: '#/components/schemas/generalErrorResponse'
                   - type: object
                     properties:
                       status:
                         type: string
-                        enum: ["INVALID_OPTIONS_ERROR", "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR"]
+                        enum: ['INVALID_OPTIONS_ERROR', 'RECOVER_ACCOUNT_TOKEN_INVALID_ERROR']
                   - type: object
                     properties:
                       status:
                         type: string
-                        enum: ["INVALID_EMAIL_ERROR"]
+                        enum: ['INVALID_EMAIL_ERROR']
                       err:
                         type: string
-                        example: "Invalid email"
+                        example: 'Invalid email'
         '404':
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/webauthn/options/signin:
+  /{apiBasePath}/{tenantId}/webauthn/options/signin:
     post:
       tags:
         - WebAuthn Recipe
@@ -2602,37 +2620,37 @@ paths:
                         $ref: '#/components/schemas/statusOK'
                       webauthnGeneratedOptionsId:
                         type: string
-                        example: "opt_123..."
+                        example: 'opt_123...'
                       createdAt:
                         type: string
-                        example: "2024-03-20T10:00:00Z"
+                        example: '2024-03-20T10:00:00Z'
                       expiresAt:
                         type: string
-                        example: "2024-03-20T10:05:00Z"
+                        example: '2024-03-20T10:05:00Z'
                       rpId:
                         type: string
-                        example: "example.com"
+                        example: 'example.com'
                       challenge:
                         type: string
-                        example: "base64challenge..."
+                        example: 'base64challenge...'
                       timeout:
                         type: number
                         example: 300000
                       userVerification:
                         type: string
-                        enum: ["required", "preferred", "discouraged"]
+                        enum: ['required', 'preferred', 'discouraged']
                   - $ref: '#/components/schemas/generalErrorResponse'
                   - type: object
                     properties:
                       status:
                         type: string
-                        enum: ["INVALID_OPTIONS_ERROR"]
+                        enum: ['INVALID_OPTIONS_ERROR']
         '404':
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/webauthn/signup:
+  /{apiBasePath}/{tenantId}/webauthn/signup:
     post:
       tags:
         - WebAuthn Recipe
@@ -2653,7 +2671,7 @@ paths:
               properties:
                 webauthnGeneratedOptionsId:
                   type: string
-                  example: "opt_123..."
+                  example: 'opt_123...'
                 credential:
                   $ref: '#/components/schemas/registrationPayload'
                 shouldTryLinkingWithSessionUser:
@@ -2702,13 +2720,13 @@ paths:
                     properties:
                       status:
                         type: string
-                        enum: ["INVALID_CREDENTIALS_ERROR", "EMAIL_ALREADY_EXISTS_ERROR"]
+                        enum: ['INVALID_CREDENTIALS_ERROR', 'EMAIL_ALREADY_EXISTS_ERROR']
         '404':
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/webauthn/signin:
+  /{apiBasePath}/{tenantId}/webauthn/signin:
     post:
       tags:
         - WebAuthn Recipe
@@ -2729,7 +2747,7 @@ paths:
               properties:
                 webauthnGeneratedOptionsId:
                   type: string
-                  example: "opt_123..."
+                  example: 'opt_123...'
                 credential:
                   $ref: '#/components/schemas/authenticationPayload'
                 shouldTryLinkingWithSessionUser:
@@ -2778,21 +2796,21 @@ paths:
                     properties:
                       status:
                         type: string
-                        enum: ["INVALID_CREDENTIALS_ERROR"]
+                        enum: ['INVALID_CREDENTIALS_ERROR']
                   - type: object
                     properties:
                       status:
                         type: string
-                        enum: ["SIGN_IN_NOT_ALLOWED"]
+                        enum: ['SIGN_IN_NOT_ALLOWED']
                       reason:
                         type: string
-                        example: "Sign in not allowed"
+                        example: 'Sign in not allowed'
         '404':
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/webauthn/recover/account/token:
+  /{apiBasePath}/{tenantId}/webauthn/recover/account/token:
     post:
       tags:
         - WebAuthn Recipe
@@ -2828,16 +2846,16 @@ paths:
                     properties:
                       status:
                         type: string
-                        enum: ["RECOVER_ACCOUNT_NOT_ALLOWED"]
+                        enum: ['RECOVER_ACCOUNT_NOT_ALLOWED']
                       reason:
                         type: string
-                        example: "Recover account not allowed"
+                        example: 'Recover account not allowed'
         '404':
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/webauthn/recover/account:
+  /{apiBasePath}/{tenantId}/webauthn/recover/account:
     post:
       tags:
         - WebAuthn Recipe
@@ -2859,10 +2877,10 @@ paths:
               properties:
                 token:
                   type: string
-                  example: "abc123..."
+                  example: 'abc123...'
                 webauthnGeneratedOptionsId:
                   type: string
-                  example: "opt_123..."
+                  example: 'opt_123...'
                 credential:
                   $ref: '#/components/schemas/registrationPayload'
       responses:
@@ -2885,21 +2903,21 @@ paths:
                     properties:
                       status:
                         type: string
-                        enum: ["INVALID_CREDENTIALS_ERROR", "RECOVER_ACCOUNT_TOKEN_INVALID_ERROR", "OPTIONS_NOT_FOUND_ERROR", "INVALID_OPTIONS_ERROR"]
+                        enum: ['INVALID_CREDENTIALS_ERROR', 'RECOVER_ACCOUNT_TOKEN_INVALID_ERROR', 'OPTIONS_NOT_FOUND_ERROR', 'INVALID_OPTIONS_ERROR']
                   - type: object
                     properties:
                       status:
                         type: string
-                        enum: ["INVALID_AUTHENTICATOR_ERROR"]
+                        enum: ['INVALID_AUTHENTICATOR_ERROR']
                       reason:
                         type: string
-                        example: "Invalid authenticator"
+                        example: 'Invalid authenticator'
         '404':
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/webauthn/credential:
+  /{apiBasePath}/{tenantId}/webauthn/credential:
     post:
       tags:
         - WebAuthn Recipe
@@ -2925,10 +2943,10 @@ paths:
               properties:
                 webauthnGeneratedOptionsId:
                   type: string
-                  example: "opt_123..."
+                  example: 'opt_123...'
                 recipeUserId:
                   type: string
-                  example: "user_123..."
+                  example: 'user_123...'
                 credential:
                   $ref: '#/components/schemas/registrationPayload'
       responses:
@@ -2947,21 +2965,21 @@ paths:
                     properties:
                       status:
                         type: string
-                        enum: ["INVALID_CREDENTIALS_ERROR", "OPTIONS_NOT_FOUND_ERROR", "INVALID_OPTIONS_ERROR"]
+                        enum: ['INVALID_CREDENTIALS_ERROR', 'OPTIONS_NOT_FOUND_ERROR', 'INVALID_OPTIONS_ERROR']
                   - type: object
                     properties:
                       status:
                         type: string
-                        enum: ["REGISTER_CREDENTIAL_NOT_ALLOWED", "INVALID_AUTHENTICATOR_ERROR"]
+                        enum: ['REGISTER_CREDENTIAL_NOT_ALLOWED', 'INVALID_AUTHENTICATOR_ERROR']
                       reason:
                         type: string
-                        example: "Register credential not allowed"
+                        example: 'Register credential not allowed'
         '404':
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/webauthn/credential/remove:
+  /{apiBasePath}/{tenantId}/webauthn/credential/remove:
       post:
         tags:
           - WebAuthn Recipe
@@ -2985,7 +3003,7 @@ paths:
                 properties:
                   webauthnCredentialId:
                     type: string
-                    example: "cred_123..."
+                    example: 'cred_123...'
         responses:
           '200':
             description: Credential removal response
@@ -3002,13 +3020,13 @@ paths:
                       properties:
                         status:
                           type: string
-                          enum: ["CREDENTIAL_NOT_FOUND_ERROR"]
+                          enum: ['CREDENTIAL_NOT_FOUND_ERROR']
           '404':
             $ref: '#/components/responses/404'
           '500':
             $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/webauthn/credential/list:
+  /{apiBasePath}/{tenantId}/webauthn/credential/list:
       get:
         tags:
           - WebAuthn Recipe
@@ -3040,13 +3058,13 @@ paths:
                             properties:
                               webauthnCredentialId: 
                                 type: string
-                                example: "cred_123..."
+                                example: 'cred_123...'
                               relyingPartyId:
                                 type: string
-                                example: "https://example.com"
+                                example: 'https://example.com'
                               recipeUserId:
                                 type: string
-                                example: "user_123..."
+                                example: 'user_123...'
                               createdAt:
                                 type: number
                                 example: 1638433545183
@@ -3061,7 +3079,7 @@ paths:
           '500':
             $ref: '#/components/responses/500'
 
-  /{apiBasePath}/<tenantId>/webauthn/email/exists:
+  /{apiBasePath}/{tenantId}/webauthn/email/exists:
     get:
       tags:
         - WebAuthn Recipe
@@ -3091,7 +3109,7 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
-  /{apiBasePath}/<tenantId>/user/webauthn/reset/token:
+  /{apiBasePath}/{tenantId}/user/webauthn/reset/token:
     post:
       tags:
         - WebAuthn Recipe
@@ -3153,7 +3171,7 @@ paths:
         '500':
           $ref: '#/components/responses/500'
   
-  /{apiBasePath}/<tenantId>/user/webauthn/reset:
+  /{apiBasePath}/{tenantId}/user/webauthn/reset:
     post:
       tags:
         - WebAuthn Recipe
@@ -3344,14 +3362,14 @@ components:
       content:
         text/plain:
           schema:
-            $ref: "#/components/schemas/internalError"
+            $ref: '#/components/schemas/internalError'
 
     400:
       description: error code 400
       content:
         text/plain:
           schema: 
-            $ref: "#/components/schemas/badRequest"
+            $ref: '#/components/schemas/badRequest'
 
 
     404:
@@ -3359,7 +3377,7 @@ components:
       content:
         text/plain:
           schema:
-            $ref: "#/components/schemas/notFound"
+            $ref: '#/components/schemas/notFound'
 
     400-oauth-error:
       description: error code 400 for OAuth2 errors
@@ -3398,7 +3416,7 @@ components:
                             reason:
                               type: object
                               example: 
-                                message: "wrong value"
+                                message: 'wrong value'
                                 expectedValue: true
                                 actualValue: false
                   - type: object
@@ -3416,7 +3434,7 @@ components:
                               example: st-mfa
                             reason:
                               type: string
-                              example: "Completed factors in the session does not satisfy the MFA requirements for auth"
+                              example: 'Completed factors in the session does not satisfy the MFA requirements for auth'
         
     
   schemas:
@@ -3482,7 +3500,7 @@ components:
               type: array
               items:
                 type: string
-                example: "cred_123..."
+                example: 'cred_123...'
               
         tenantIds:
           type: array
@@ -3586,7 +3604,7 @@ components:
     
     method:
           type: string
-          example: "token"
+          example: 'token'
     
     code:
       $ref: '#/components/schemas/token'
@@ -3647,10 +3665,10 @@ components:
       properties:
         status:
           type: string
-          enum: ["SIGN_IN_NOT_ALLOWED"]
+          enum: ['SIGN_IN_NOT_ALLOWED']
         reason:
           type: string
-          example: "Cannot sign in due to security reasons. Please try resetting your password, use a different login method or contact support. (ERR_CODE_008)"
+          example: 'Cannot sign in due to security reasons. Please try resetting your password, use a different login method or contact support. (ERR_CODE_008)'
 
     signupResponse:
       type: object
@@ -3665,10 +3683,10 @@ components:
       properties:
         status:
           type: string
-          enum: ["SIGN_UP_NOT_ALLOWED"]
+          enum: ['SIGN_UP_NOT_ALLOWED']
         reason:
           type: string
-          example: "Cannot sign up due to security reasons. Please try resetting your password, use a different login method or contact support. (ERR_CODE_007)"
+          example: 'Cannot sign up due to security reasons. Please try resetting your password, use a different login method or contact support. (ERR_CODE_007)'
 
     passwordResetTokenResponse:
       type: object
@@ -3684,7 +3702,7 @@ components:
           enum: ['PASSWORD_RESET_NOT_ALLOWED']
         reason:
           type: string
-          example: "Token generation was not done because of account take over risk. Please contact support. (HAS_OTHER_EMAIL_OR_PHONE)"
+          example: 'Token generation was not done because of account take over risk. Please contact support. (HAS_OTHER_EMAIL_OR_PHONE)'
 
     signinupResponse:
       type: object
@@ -3732,7 +3750,7 @@ components:
                 example: email
               error:
                 type: string
-                example: "Error Message"
+                example: 'Error Message'
 
     wrongCredentialsResponse:
       type: object
@@ -3756,7 +3774,7 @@ components:
               enum: ['SIGN_IN_UP_NOT_ALLOWED']
             reason:
               type: string
-              example: "Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)"
+              example: 'Cannot sign in / up due to security reasons. Please contact support. (IS_SIGN_IN_ALLOWED_FALSE)'
 
     internalError:
       type: string
@@ -3799,13 +3817,13 @@ components:
       properties:
         id:
           type: string
-          example: "cred_123..."
+          example: 'cred_123...'
         rawId:
           type: string
-          example: "base64rawid..."
+          example: 'base64rawid...'
         authenticatorAttachment:
           type: string
-          enum: ["platform", "cross-platform"]
+          enum: ['platform', 'cross-platform']
         clientExtensionResults:
           $ref: '#/components/schemas/clientExtensionResults'
               
@@ -3817,27 +3835,27 @@ components:
           properties:
             clientDataJSON:
               type: string
-              example: "base64clientdata..."
+              example: 'base64clientdata...'
             attestationObject:
               type: string
-              example: "base64attestation..."
+              example: 'base64attestation...'
             authenticatorData:
               type: string
-              example: "base64authenticatordata..."
+              example: 'base64authenticatordata...'
             transports:
               type: array
               items:
                 type: string
-                enum: ["usb", "nfc", "ble", "internal", "smart-card", "cable", "hybrid"]
+                enum: ['usb', 'nfc', 'ble', 'internal', 'smart-card', 'cable', 'hybrid']
             publicKey:
               type: string
-              example: "base64publickey..."
+              example: 'base64publickey...'
             publicKeyAlgorithm:
               type: number
               example: -7
         type:
           type: string
-          enum: ["public-key"]
+          enum: ['public-key']
 
     authenticationPayload:
       type: object
@@ -3849,13 +3867,13 @@ components:
       properties:
         id:
           type: string
-          example: "cred_123..."
+          example: 'cred_123...'
         rawId:
           type: string
-          example: "base64rawid..."
+          example: 'base64rawid...'
         authenticatorAttachment:
           type: string
-          enum: ["platform", "cross-platform"]
+          enum: ['platform', 'cross-platform']
         clientExtensionResults:
           $ref: '#/components/schemas/clientExtensionResults'
         response:
@@ -3867,19 +3885,19 @@ components:
           properties:
             clientDataJSON:
               type: string
-              example: "base64clientdata..."
+              example: 'base64clientdata...'
             authenticatorData:
               type: string
-              example: "base64authenticatordata..."
+              example: 'base64authenticatordata...'
             signature:
               type: string
-              example: "base64signature..."
+              example: 'base64signature...'
             userHandle:
               type: string
-              example: "base64userhandle..."
+              example: 'base64userhandle...'
         type:
           type: string
-          enum: ["public-key"]
+          enum: ['public-key']
 
   securitySchemes:
     AccessTokenCookie:
@@ -3889,7 +3907,7 @@ components:
       name: sAccessToken
 
     AccessTokenBearer:
-      description: Returned as the "st-access-token" header from sign-in and refresh endpoints and present on requests that update the access token payload
+      description: Returned as the 'st-access-token' header from sign-in and refresh endpoints and present on requests that update the access token payload
       type: http
       scheme: bearer
 
@@ -3899,7 +3917,7 @@ components:
       type: http
 
     RefreshTokenCookie:
-      description: Returned as the "st-refresh-token" header from sign-in and refresh endpoints
+      description: Returned as the 'st-refresh-token' header from sign-in and refresh endpoints
       type: apiKey
       in: cookie
       name: sRefreshToken
